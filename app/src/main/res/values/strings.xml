@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Netflex</string>
+    <string name="home">Home</string>
+    <string name="new_hot"><![CDATA[New & Hot]]></string>
+    <string name="profile">Profile</string>
+    <string name="netflex">NETFLEX</string>
+    <string name="history">History</string>
+    <string name="my_list">My List</string>
+    <string name="no_actor_info">No information</string>
+    <string name="rate">Rate</string>
+    <string name="add_my_list">My List</string>
+    <string name="actors">Actors</string>
+    <string name="play_btn">▶ PLAY</string>
 </resources>
