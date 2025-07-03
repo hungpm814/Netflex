@@ -43,15 +43,15 @@ public class HomeActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     List<Film> films = response.body().items;
 
-                    List<String> posters = new ArrayList<>();
-                    for (Film film : films) {
-                        posters.add(film.poster);
-                    }
+//                    List<String> posters = new ArrayList<>();
+//                    for (Film film : films) {
+//                        posters.add(film.poster);
+//                    }
 
-                    setupRecyclerView(recyclerOnlyOn, posters);
-                    setupRecyclerView(recyclerPopular, posters);
-                    setupRecyclerView(recyclerTrending, posters);
-                    setupRecyclerView(recyclerReleases, posters);
+                    setupRecyclerView(recyclerOnlyOn, films);
+                    setupRecyclerView(recyclerPopular, films);
+                    setupRecyclerView(recyclerTrending, films);
+                    setupRecyclerView(recyclerReleases, films);
                 }
             }
 
@@ -63,12 +63,9 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
-
-    private void setupRecyclerView(RecyclerView recyclerView, List<String> images) {
+    private void setupRecyclerView(RecyclerView recyclerView, List<Film> films) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(new FilmAdapter(images));
+        recyclerView.setAdapter(new FilmAdapter(films));
     }
-
-
 }
