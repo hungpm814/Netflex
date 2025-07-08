@@ -11,12 +11,48 @@
         android:id="@+id/imagePoster"
         android:layout_width="150dp"
         android:layout_height="220dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="70dp"
         android:background="@android:color/darker_gray"
         android:scaleType="fitXY"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/btnBack"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="20dp"
+        android:layout_gravity="top|start"
+        android:background="@drawable/arrow_left_alt_24px"
+        android:contentDescription="Back"
+        android:padding="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <WebView
+        android:id="@+id/webViewTrailer"
+        android:layout_width="350dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/actionButtons" />
+
+    <androidx.media3.ui.PlayerView
+        android:id="@+id/playerView"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/webViewTrailer"
+        app:resize_mode="fit"
+        app:show_buffering="when_playing"
+        app:use_controller="true" />
 
     <!-- Year -->
     <TextView
@@ -46,50 +82,65 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textYear" />
 
-    <!-- Tập phim hiện tại -->
-    <TextView
-        android:id="@+id/title"
+    <Button
+        android:id="@+id/btnTrailer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="24dp"
+        android:backgroundTint="#444444"
+        android:text="@string/watch_trailer"
         android:textColor="#FFFFFF"
-        android:textSize="20sp"
         android:textStyle="bold"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btnPlay" />
 
-    <!-- Description -->
-    <TextView
-        android:id="@+id/textAbout"
+    <LinearLayout
+        android:id="@+id/filmInfoLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:layout_marginEnd="16dp"
-        android:textColor="#FFFFFF"
-        android:textSize="14sp"
-        android:textStyle="bold"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title" />
+        app:layout_constraintTop_toBottomOf="@id/btnTrailer">
 
-    <!-- Actors -->
-    <TextView
-        android:id="@+id/textActor"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/actors"
-        android:textColor="#AAAAAA"
-        android:textSize="13sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textAbout" />
+        <!-- Title -->
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <!-- Description -->
+        <TextView
+            android:id="@+id/textAbout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <!-- Actors -->
+        <TextView
+            android:id="@+id/textActor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/actors"
+            android:textColor="#AAAAAA"
+            android:textSize="13sp" />
+    </LinearLayout>
 
     <!-- Action buttons -->
     <LinearLayout
@@ -102,7 +153,7 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textActor">
+        app:layout_constraintTop_toBottomOf="@id/filmInfoLayout">
 
         <!-- My List -->
         <LinearLayout
@@ -115,8 +166,8 @@
             <ImageView
                 android:layout_width="28dp"
                 android:layout_height="28dp"
-                android:backgroundTint="@color/white"
-                android:background="@drawable/add" />
+                android:background="@drawable/add"
+                android:backgroundTint="@color/white" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -137,8 +188,8 @@
             <ImageView
                 android:layout_width="28dp"
                 android:layout_height="28dp"
-                android:backgroundTint="@color/white"
-                android:background="@drawable/thumb_up_24px" />
+                android:background="@drawable/thumb_up_24px"
+                android:backgroundTint="@color/white" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -159,8 +210,8 @@
             <ImageView
                 android:layout_width="28dp"
                 android:layout_height="28dp"
-                android:backgroundTint="@color/white"
-                android:background="@drawable/ios_share_24px" />
+                android:background="@drawable/ios_share_24px"
+                android:backgroundTint="@color/white" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -170,27 +221,4 @@
                 android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
-
-    <!-- Tab bar (Episodes, Trailers) -->
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="#000000"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/actionButtons"
-        app:tabSelectedTextColor="#FFFFFF"
-        app:tabTextColor="#CCCCCC" />
-
-    <!-- Episodes RecyclerView -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerEpisodes"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:padding="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tabLayout" />
 </androidx.constraintlayout.widget.ConstraintLayout>
