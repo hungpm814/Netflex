@@ -13,6 +13,9 @@
     <string name="play_btn">▶ PLAY</string>
     <string name="watch_trailer">Watch Trailer</string>
     <string name="hide_trailer">Hide trailer</string>
+    <string name="back">Back</string>
+    <string name="poster">Poster</string>
+    <string name="share">Share</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="personal_info">Personal Information</string>
     <string name="username_hint">Username *</string>
