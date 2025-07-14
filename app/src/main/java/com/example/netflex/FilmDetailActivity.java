@@ -22,6 +22,7 @@ import com.example.netflex.APIServices.FilmAPIService;
 import com.example.netflex.model.Actor;
 import com.example.netflex.model.Film;
 import com.example.netflex.viewModels.FilmDetailViewModel;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -56,54 +57,17 @@ public class FilmDetailActivity extends AppCompatActivity {
             call.enqueue(new Callback<>() {
                 @Override
                 public void onResponse(Call<FilmDetailViewModel> call, Response<FilmDetailViewModel> response) {
-                    if (response.isSuccessful()) {
+                    if (response.isSuccessful() && response.body() != null) {
                         Film film = response.body().film;
                         List<Actor> actors = response.body().actors;
 
-                        // Show play trailer btn if trailerUrl exists.
-                        if (!film.getTrailer().isEmpty()) {
-                            btnTrailer.setVisibility(View.VISIBLE);
-                            btnTrailer.setOnClickListener(v -> {
-                                toggleTrailerView(film);
-                                if (isTrailerViewOpened) {
-                                    btnTrailer.setText(R.string.hide_trailer);
-                                } else {
-                                    btnTrailer.setText(R.string.watch_trailer);
-                                }
-                            });
-                        }
+                        // Setup viewModel.
+                        FilmDetailViewModel viewModel = new FilmDetailViewModel();
+                        viewModel.setFilm(film);
+                        viewModel.setActors(actors);
 
-                        // Show play btn if path exists.
-                        if (!film.getPath().isEmpty()) {
-                            btnPlay.setVisibility(View.VISIBLE);
-
-                            btnPlay.setOnClickListener(v -> {
-                                playFilm(film);
-                            });
-                        }
-
-                        // Set image to poster.
-                        Picasso.get()
-                                .load(film.poster)
-                                .into(poster);
-
-                        title.setText(film.getTitle());
-                        textAbout.setText(film.getAbout());
-
-                        String textsForTextActor = "";
-                        StringBuilder sb = new StringBuilder();
-
-                        if (actors.size() > 0) {
-                            for (Actor a : actors) {
-                                sb.append(a.getName() + ", ");
-                            }
-                            textsForTextActor = sb.toString();
-                        } else {
-                            textsForTextActor = getString(R.string.no_actor_info);
-                        }
-
-                        textActor.setText("Actors: " + textsForTextActor);
-                        textYear.setText("Year: " + film.getProductionYear());
+                        // Update views' content on the layout.
+                        prepareViewsData(viewModel);
                     }
                 }
 
@@ -116,6 +80,54 @@ public class FilmDetailActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Film ID not found", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void prepareViewsData(FilmDetailViewModel viewModel) {
+
+        // Show play trailer btn if trailerUrl exists.
+        if (!viewModel.film.getTrailer().isEmpty()) {
+            btnTrailer.setVisibility(View.VISIBLE);
+            btnTrailer.setOnClickListener(v -> {
+                toggleTrailerView(viewModel.film);
+                if (isTrailerViewOpened) {
+                    btnTrailer.setText(R.string.hide_trailer);
+                } else {
+                    btnTrailer.setText(R.string.watch_trailer);
+                }
+            });
+        }
+
+        // Show play btn if path exists.
+        if (!viewModel.film.getPath().isEmpty()) {
+            btnPlay.setVisibility(View.VISIBLE);
+
+            btnPlay.setOnClickListener(v -> {
+                playFilm(viewModel.film);
+            });
+        }
+
+        // Set image to poster.
+        Picasso.get()
+                .load(viewModel.film.poster)
+                .into(poster);
+
+        title.setText(viewModel.film.getTitle());
+        textAbout.setText(viewModel.film.getAbout());
+
+        String textsForTextActor = "";
+        StringBuilder sb = new StringBuilder();
+
+        if (!viewModel.actors.isEmpty()) {
+            for (Actor a : viewModel.actors) {
+                sb.append(a.getName()).append(", ");
+            }
+            textsForTextActor = sb.toString();
+        } else {
+            textsForTextActor = getString(R.string.no_actor_info);
+        }
+
+        textActor.setText("Actors: " + textsForTextActor);
+        textYear.setText("Year: " + viewModel.film.getProductionYear());
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -205,4 +217,5 @@ public class FilmDetailActivity extends AppCompatActivity {
             webViewTrailer.loadUrl("about:blank");
         }
     }
+
 }
