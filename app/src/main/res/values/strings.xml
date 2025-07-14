@@ -16,4 +16,17 @@
     <string name="back">Back</string>
     <string name="poster">Poster</string>
     <string name="share">Share</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="personal_info">Personal Information</string>
+    <string name="username_hint">Username *</string>
+    <string name="email_hint">Email *</string>
+    <string name="phone_hint">Phone Number</string>
+    <string name="cancel">Cancel</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="profile_updated">Profile updated successfully!</string>
+    <string name="username_required">Username is required.</string>
+    <string name="username_max_length">Username cannot exceed 100 characters.</string>
+    <string name="email_required">Email is required.</string>
+    <string name="email_invalid">Invalid email address.</string>
+    <string name="phone_invalid">Invalid phone number.</string>
 </resources>
