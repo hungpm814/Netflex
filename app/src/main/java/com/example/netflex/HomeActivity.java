@@ -1,5 +1,6 @@
 package com.example.netflex;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -12,6 +13,7 @@ import com.example.netflex.APIServices.FilmAPIService;
 import com.example.netflex.adapter.FilmAdapter;
 import com.example.netflex.model.Film;
 import com.example.netflex.resonseAPI.FilmResponse;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,10 +26,15 @@ import retrofit2.Response;
 
 public class HomeActivity extends AppCompatActivity {
 
+    private BottomNavigationView bottomNavigationView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        bottomNavigationView = findViewById(R.id.bottomNavigation);
+        setupBottomNavigation();
 
         RecyclerView recyclerOnlyOn = findViewById(R.id.recyclerOnlyOn);
         RecyclerView recyclerPopular = findViewById(R.id.recyclerPopular);
@@ -61,6 +68,31 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void setupBottomNavigation() {
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.menu_home) {
+                // Already on home, do nothing
+                return true;
+            } else if (itemId == R.id.menu_new) {
+                // Handle New & Hot
+                return true;
+            } else if (itemId == R.id.menu_History) {
+                // Handle History
+                return true;
+            } else if (itemId == R.id.menu_profile) {
+                // Open User Profile
+                Intent intent = new Intent(HomeActivity.this, UserProfileActivity.class);
+                startActivity(intent);
+                return true;
+            }
+            return false;
+        });
+        
+        // Set Home as selected by default
+        bottomNavigationView.setSelectedItemId(R.id.menu_home);
     }
 
     private void setupRecyclerView(RecyclerView recyclerView, List<Film> films) {
