@@ -6,4 +6,11 @@
     <string name="netflex">NETFLEX</string>
     <string name="history">History</string>
     <string name="my_list">My List</string>
+    <string name="no_actor_info">No information</string>
+    <string name="rate">Rate</string>
+    <string name="add_my_list">My List</string>
+    <string name="actors">Actors</string>
+    <string name="play_btn">▶ PLAY</string>
+    <string name="watch_trailer">Watch Trailer</string>
+    <string name="hide_trailer">Hide trailer</string>
 </resources>

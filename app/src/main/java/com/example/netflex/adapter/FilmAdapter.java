@@ -1,24 +1,29 @@
 package com.example.netflex.adapter;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.netflex.FilmDetailActivity;
 import com.example.netflex.R;
+import com.example.netflex.model.Film;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class FilmAdapter extends RecyclerView.Adapter<FilmAdapter.FilmViewHolder> {
 
-    private List<String> imageUrls;
+    private final List<Film> films;
 
-    public FilmAdapter(List<String> imageUrls) {
-        this.imageUrls = imageUrls;
+    public FilmAdapter(List<Film> films) {
+        this.films = films;
     }
 
     @NonNull
@@ -30,15 +35,24 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmAdapter.FilmViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull FilmViewHolder holder, int position) {
-        String imageUrl = imageUrls.get(position);
+        Film currentFilm = films.get(position);
         Picasso.get()
-                .load(imageUrl)
+                .load(currentFilm.poster)
                 .into(holder.imagePoster);
+        holder.imagePoster.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Context context = v.getContext();
+                Intent intent = new Intent(context, FilmDetailActivity.class);
+                intent.putExtra("film_id", currentFilm.id);
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return imageUrls.size();
+        return films.size();
     }
 
     public static class FilmViewHolder extends RecyclerView.ViewHolder {
