@@ -26,6 +26,9 @@
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="true" />
         <activity
+            android:name=".SerieDetailActivity"
+            android:exported="true" />
+        <activity
             android:name=".HomeActivity"
             android:exported="true">
             <intent-filter>

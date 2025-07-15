@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="#000000">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/rootLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="24dp"
+        tools:ignore="WebViewLayout">
+
+        <!-- Poster -->
+        <ImageView
+            android:id="@+id/imagePoster"
+            android:layout_width="150dp"
+            android:layout_height="220dp"
+            android:layout_marginTop="70dp"
+            android:background="@android:color/darker_gray"
+            android:scaleType="fitXY"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Back Button -->
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginStart="20dp"
+            android:src="@drawable/arrow_left_alt_24px"
+            android:contentDescription="Back"
+            android:padding="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <!-- Year -->
+        <TextView
+            android:id="@+id/textYear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="#CCCCCC"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@id/imagePoster"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Title & About -->
+        <LinearLayout
+            android:id="@+id/filmInfoLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@id/textYear"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/textAbout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:layout_marginTop="8dp"/>
+
+            <TextView
+                android:id="@+id/textActor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/actors"
+                android:textColor="#AAAAAA"
+                android:textSize="13sp"
+                android:layout_marginTop="8dp"/>
+        </LinearLayout>
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:id="@+id/actionButtons"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/filmInfoLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!-- Add to list -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:background="@drawable/add"
+                    android:backgroundTint="@color/white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/add_my_list"
+                    android:textColor="#CCCCCC"
+                    android:textSize="12sp"/>
+            </LinearLayout>
+
+            <!-- Like -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:background="@drawable/thumb_up_24px"
+                    android:backgroundTint="@color/white"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/rate"
+                    android:textColor="#CCCCCC"
+                    android:textSize="12sp"/>
+            </LinearLayout>
+
+            <!-- Share -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:background="@drawable/ios_share_24px"
+                    android:backgroundTint="@color/white"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Share"
+                    android:textColor="#CCCCCC"
+                    android:textSize="12sp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- PlayerView -->
+        <androidx.media3.ui.PlayerView
+            android:id="@+id/playerView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="16dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/actionButtons"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:resize_mode="fit"
+            app:show_buffering="when_playing"
+            app:use_controller="true"/>
+
+        <!-- Episodes -->
+        <TextView
+            android:id="@+id/textEpisodes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Episodes"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.05"
+            android:fontFamily="sans-serif-medium"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintTop_toBottomOf="@id/playerView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerEpisodes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="32dp"
+            android:nestedScrollingEnabled="false"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            app:layout_constraintTop_toBottomOf="@id/textEpisodes"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

@@ -11,6 +11,7 @@
     <string name="add_my_list">My List</string>
     <string name="actors">Actors</string>
     <string name="play_btn">▶ PLAY</string>
+    <string name="episode_poster">Episode Poster</string>
     <string name="watch_trailer">Watch Trailer</string>
     <string name="hide_trailer">Hide trailer</string>
     <string name="back">Back</string>
@@ -29,4 +30,6 @@
     <string name="email_required">Email is required.</string>
     <string name="email_invalid">Invalid email address.</string>
     <string name="phone_invalid">Invalid phone number.</string>
+    <string name="serie_poster">Serie Poster</string>
+    <!-- thêm các chuỗi khác nếu cần -->
 </resources>
