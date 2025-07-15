@@ -13,6 +13,7 @@ public class WatchFilmActivity extends AppCompatActivity {
     private PlayerView playerView;
     private ExoPlayer player;
     ImageView btnBack;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,10 +21,10 @@ public class WatchFilmActivity extends AppCompatActivity {
 
         playerView = findViewById(R.id.playerView);
         btnBack = findViewById(R.id.btnBack);
-
         btnBack.setOnClickListener(v -> finish());
 
         String videoUrl = getIntent().getStringExtra("video_url");
+        String episodeTitle = getIntent().getStringExtra("episode_title");
 
         if (videoUrl != null) {
             player = new ExoPlayer.Builder(this).build();
@@ -31,12 +32,16 @@ public class WatchFilmActivity extends AppCompatActivity {
 
             MediaItem mediaItem = new MediaItem.Builder()
                     .setUri(Uri.parse(videoUrl))
-                    .setMimeType("application/x-mpegURL") // HLS (.m3u8)
+                    .setMimeType("application/x-mpegURL")
                     .build();
 
             player.setMediaItem(mediaItem);
             player.prepare();
             player.play();
+
+            if (episodeTitle != null) {
+                setTitle(episodeTitle); // Set title in toolbar
+            }
         }
     }
 

@@ -10,9 +10,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.netflex.APIServices.ApiClient;
 import com.example.netflex.APIServices.FilmAPIService;
+import com.example.netflex.APIServices.SerieAPIService;
 import com.example.netflex.adapter.FilmAdapter;
+import com.example.netflex.adapter.SerieAdapter;
 import com.example.netflex.model.Film;
+import com.example.netflex.model.Serie;
 import com.example.netflex.resonseAPI.FilmResponse;
+import com.example.netflex.resonseAPI.SerieResponse;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
@@ -55,10 +59,8 @@ public class HomeActivity extends AppCompatActivity {
 //                        posters.add(film.poster);
 //                    }
 
-                    setupRecyclerView(recyclerOnlyOn, films);
-                    setupRecyclerView(recyclerPopular, films);
-                    setupRecyclerView(recyclerTrending, films);
-                    setupRecyclerView(recyclerReleases, films);
+                    setupFilmRecyclerView(recyclerTrending, films);
+                    setupFilmRecyclerView(recyclerReleases, films);
                 }
             }
 
@@ -67,6 +69,29 @@ public class HomeActivity extends AppCompatActivity {
                 Log.e("API_ERROR", "Failed to fetch films", t);
             }
         });
+        SerieAPIService serieAPIService = ApiClient.getRetrofit().create(SerieAPIService.class);
+        serieAPIService.getSeries(1).enqueue(new Callback<SerieResponse>() {
+            @Override
+            public void onResponse(Call<SerieResponse> call, Response<SerieResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Serie> series = response.body().items;
+                    Log.d("SERIE_API", "Series count: " + series.size());
+
+                    for (Serie s : series) {
+                        Log.d("SERIE_API", "Serie: " + s.getTitle() + " | Poster: " + s.getPoster());
+                    }
+                    setupSerieRecyclerView(recyclerPopular,series);
+                    setupSerieRecyclerView(recyclerOnlyOn, series);  // Or any RecyclerView
+                }
+            }
+            @Override
+            public void onFailure(Call<SerieResponse> call, Throwable t) {
+                Log.e("API_ERROR", "Failed to fetch series", t);
+            }
+        });
+    }
+
+    private void setupFilmRecyclerView(RecyclerView recyclerView, List<Film> films) {
 
     }
 
@@ -99,5 +124,11 @@ public class HomeActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(new FilmAdapter(films));
+    }
+
+    private void setupSerieRecyclerView(RecyclerView recyclerView, List<Serie> series) {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(new SerieAdapter(this, series));
     }
 }
