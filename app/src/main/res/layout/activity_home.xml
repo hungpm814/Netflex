@@ -37,6 +37,8 @@
                 android:textStyle="bold"
                 android:fontFamily="sans-serif-condensed"/>
 
+
+
             <!-- Popular on Netflex -->
             <TextView
                 android:text="Popular on Netflex"
@@ -56,25 +58,6 @@
                 android:scrollbars="none"
                 android:layout_marginBottom="16dp"/>
 
-            <!-- Section: My List -->
-            <TextView
-                android:text="Only on Netflex"
-                android:textColor="@android:color/white"
-                android:textSize="18sp"
-                android:layout_marginBottom="8dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerOnlyOn"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:nestedScrollingEnabled="false"
-                android:orientation="horizontal"
-                android:overScrollMode="never"
-                android:scrollbars="none"
-                android:layout_marginBottom="16dp"/>
-
             <!-- Trending Now -->
             <TextView
                 android:text="Trending Now"
@@ -86,6 +69,25 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerTrending"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:nestedScrollingEnabled="false"
+                android:orientation="horizontal"
+                android:overScrollMode="never"
+                android:scrollbars="none"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Section: My List -->
+            <TextView
+                android:text="Only on Netflex"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:layout_marginBottom="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerOnlyOn"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:nestedScrollingEnabled="false"
