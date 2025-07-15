@@ -15,7 +15,18 @@
         android:theme="@style/Theme.Netflex"
         tools:targetApi="31">
         <activity
+            android:name=".UserProfileActivity"
+            android:exported="true" />
+        <activity
+            android:name=".WatchFilmActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:exported="true" />
+        <activity
             android:name=".FilmDetailActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:exported="true" />
+        <activity
+            android:name=".SerieDetailActivity"
             android:exported="true" />
         <activity
             android:name=".HomeActivity"

@@ -16,5 +16,8 @@ public class ApiClient {
         }
         return retrofit;
     }
+    public static AuthApiService getAuthService() {
+        return getRetrofit().create(AuthApiService.class);
+    }
 }
 

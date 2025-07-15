@@ -11,4 +11,25 @@
     <string name="add_my_list">My List</string>
     <string name="actors">Actors</string>
     <string name="play_btn">▶ PLAY</string>
+    <string name="episode_poster">Episode Poster</string>
+    <string name="watch_trailer">Watch Trailer</string>
+    <string name="hide_trailer">Hide trailer</string>
+    <string name="back">Back</string>
+    <string name="poster">Poster</string>
+    <string name="share">Share</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="personal_info">Personal Information</string>
+    <string name="username_hint">Username *</string>
+    <string name="email_hint">Email *</string>
+    <string name="phone_hint">Phone Number</string>
+    <string name="cancel">Cancel</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="profile_updated">Profile updated successfully!</string>
+    <string name="username_required">Username is required.</string>
+    <string name="username_max_length">Username cannot exceed 100 characters.</string>
+    <string name="email_required">Email is required.</string>
+    <string name="email_invalid">Invalid email address.</string>
+    <string name="phone_invalid">Invalid phone number.</string>
+    <string name="serie_poster">Serie Poster</string>
+    <!-- thêm các chuỗi khác nếu cần -->
 </resources>
