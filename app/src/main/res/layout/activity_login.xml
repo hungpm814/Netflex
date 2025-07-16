@@ -34,14 +34,16 @@
             android:layout_marginBottom="40dp" />
 
         <!-- Email Input -->
+
         <TextView
-            android:layout_width="379dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:text="Email"
-            android:textColor="@color/black"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginBottom="8dp" />
+
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
@@ -148,7 +150,7 @@
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@color/white"
-            android:background="@drawable/button_background"
+            android:background="@drawable/button_style"
             android:layout_marginBottom="24dp"
             android:elevation="4dp" />
 
