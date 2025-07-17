@@ -50,6 +50,9 @@ dependencies {
     implementation("androidx.media3:media3-ui-compose:1.7.1")
     implementation("androidx.media3:media3-exoplayer-hls:1.7.1")
 
+    implementation("com.google.android.material:material:1.11.0")
+
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

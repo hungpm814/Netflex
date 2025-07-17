@@ -31,5 +31,6 @@
     <string name="email_invalid">Invalid email address.</string>
     <string name="phone_invalid">Invalid phone number.</string>
     <string name="serie_poster">Serie Poster</string>
+    <string name="filter">Filter</string>
     <!-- thêm các chuỗi khác nếu cần -->
 </resources>
