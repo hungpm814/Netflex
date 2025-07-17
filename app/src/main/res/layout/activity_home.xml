@@ -37,16 +37,36 @@
                 android:textStyle="bold"
                 android:fontFamily="sans-serif-condensed"/>
 
-            <Button
-                android:id="@+id/btnFilter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/filter"
-                android:textColor="@android:color/white"
-                android:backgroundTint="#E50914"
-                android:layout_gravity="start"
-                android:layout_margin="8dp"/>
+            <!-- Search + Filter cùng 1 hàng -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:orientation="horizontal"
+                android:layout_marginBottom="20dp">
 
+                <androidx.appcompat.widget.SearchView
+                    android:id="@+id/searchView"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:queryHint="Search"
+                    android:iconifiedByDefault="false"
+                    android:background="@drawable/search_bg"
+                    android:padding="8dp"
+                    android:textColorHint="#888"
+                    android:textColor="@android:color/white" />
+
+                <ImageButton
+                    android:id="@+id/btnFilter"
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_circle_button"
+                    android:padding="10dp"
+                    android:src="@drawable/filter"
+                    android:scaleType="centerInside"
+                    android:contentDescription="@string/filter"/>
+            </LinearLayout>
 
             <!-- Popular on Netflex -->
             <TextView

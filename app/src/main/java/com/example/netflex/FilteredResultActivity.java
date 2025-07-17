@@ -8,15 +8,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,16 +26,12 @@ import com.example.netflex.APIServices.ApiClient;
 import com.example.netflex.APIServices.CountryAPIService;
 import com.example.netflex.APIServices.FilmAPIService;
 import com.example.netflex.APIServices.GenreAPIService;
-import com.example.netflex.APIServices.SerieAPIService;
 import com.example.netflex.adapter.FilmAdapter;
-import com.example.netflex.adapter.SerieAdapter;
 import com.example.netflex.model.Country;
 import com.example.netflex.model.Film;
 import com.example.netflex.model.Genre;
-import com.example.netflex.model.Serie;
 import com.example.netflex.resonseAPI.FilmResponse;
 import com.example.netflex.resonseAPI.GenreResponse;
-import com.example.netflex.resonseAPI.SerieResponse;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -41,66 +39,60 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class HomeActivity extends AppCompatActivity {
+public class FilteredResultActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerTrending;
-    private RecyclerView recyclerReleases;
+    private RecyclerView recyclerResults;
     private List<Genre> genres;
     private List<Country> countries;
-
-
     private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_filtered_result);
 
         bottomNavigationView = findViewById(R.id.bottomNavigation);
         setupBottomNavigation();
 
-        RecyclerView recyclerOnlyOn = findViewById(R.id.recyclerOnlyOn);
-        RecyclerView recyclerPopular = findViewById(R.id.recyclerPopular);
-        recyclerTrending = findViewById(R.id.recyclerTrending);
-        recyclerReleases = findViewById(R.id.recyclerReleases);
+        recyclerResults = findViewById(R.id.recyclerFiltered);
+        recyclerResults.setLayoutManager(new GridLayoutManager(this, 3));
 
-        //Fetch danh sách Film
-        fetchFilteredFilms(null, null, null);
+        // Nhận dữ liệu từ Intent
+        String genreIdStr = getIntent().getStringExtra("genreId");
+        String countryIdStr = getIntent().getStringExtra("countryId");
+        int year = getIntent().getIntExtra("year", -1);
 
-        // Code cho phần Lọc
-        findViewById(R.id.btnFilter).setOnClickListener(v -> showFilterDialog());
+        UUID genreId = genreIdStr != null ? UUID.fromString(genreIdStr) : null;
+        UUID countryId = countryIdStr != null ? UUID.fromString(countryIdStr) : null;
+        Integer selectedYear = (year != -1) ? year : null;
 
-        // Gọi API lấy danh sách Serie
-        SerieAPIService serieAPIService = ApiClient.getRetrofit().create(SerieAPIService.class);
-        serieAPIService.getSeries(1).enqueue(new Callback<SerieResponse>() {
+        // Gọi API lấy dữ liệu lọc
+        FilmAPIService apiService = ApiClient.getRetrofit().create(FilmAPIService.class);
+        apiService.getFilms(1, genreId, countryId, selectedYear).enqueue(new Callback<FilmResponse>() {
             @Override
-            public void onResponse(Call<SerieResponse> call, Response<SerieResponse> response) {
+            public void onResponse(Call<FilmResponse> call, Response<FilmResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<Serie> series = response.body().items;
-                    Log.d("SERIE_API", "Series count: " + series.size());
-
-                    setupSerieRecyclerView(recyclerPopular, series);
-                    setupSerieRecyclerView(recyclerOnlyOn, series);
-                } else {
-                    Log.e("SERIE_API", "Response failed or body is null");
+                    List<Film> films = response.body().items;
+                    recyclerResults.setAdapter(new FilmAdapter(films));
                 }
             }
 
             @Override
-            public void onFailure(Call<SerieResponse> call, Throwable t) {
-                Log.e("API_ERROR", "Failed to fetch series", t);
+            public void onFailure(Call<FilmResponse> call, Throwable t) {
+                Log.e("FILTER_RESULT", "Failed to fetch results", t);
             }
         });
+
+        // Code cho phần Lọc
+        findViewById(R.id.btnFilter).setOnClickListener(v -> showFilterDialog());
     }
 
     // Fetch Filter Film
@@ -118,9 +110,8 @@ public class HomeActivity extends AppCompatActivity {
                     List<Film> films = response.body().items;
                     Log.d("FILM_API", "Filtered films count: " + films.size());
 
-                    // Gán dữ liệu vào cả 2 RecyclerView
-                    setupFilmRecyclerView(recyclerTrending, films);
-                    setupFilmRecyclerView(recyclerReleases, films);
+                    // Gán dữ liệu vào RecyclerView
+                    setupFilmRecyclerView(recyclerResults, films);
                 } else {
                     Log.e("FILM_API", "Response code: " + response.code());
 
@@ -139,24 +130,13 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-
-
-    // Hiển thị danh sách Film
     private void setupFilmRecyclerView(RecyclerView recyclerView, List<Film> films) {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false);
+        LinearLayoutManager layoutManager = new GridLayoutManager(this, 3);
+        //recyclerResults.setLayoutManager(new GridLayoutManager(this, 3));
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(new FilmAdapter(films));
     }
 
-
-    // Hiển thị danh sách Serie
-    private void setupSerieRecyclerView(RecyclerView recyclerView, List<Serie> series) {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(new SerieAdapter(this, series));
-    }
-
-    // Lọc Film
     private void showFilterDialog() {
         fetchGenresAndCountries(() -> {
             View view = LayoutInflater.from(this).inflate(R.layout.dialog_filter, null);
@@ -169,7 +149,7 @@ public class HomeActivity extends AppCompatActivity {
             Button btnSeries = view.findViewById(R.id.btnSeries);
 
             // Màu mặc định và màu khi chọn
-            int selectedColor = Color.parseColor("#3399FF"); // xanh nước biển nhạt
+            int selectedColor = Color.parseColor("#3399FF");
             int defaultColor = Color.parseColor("#444444");
 
             btnFilm.setOnClickListener(v -> {
@@ -324,13 +304,12 @@ public class HomeActivity extends AppCompatActivity {
                             .findFirst().orElse(null);
                 }
 
-                // Tạo Intent để mở trang mới
-                Intent intent = new Intent(HomeActivity.this, FilteredResultActivity.class);
-                intent.putExtra("genreId", selectedGenre != null ? selectedGenre.id.toString() : null);
-                intent.putExtra("countryId", selectedCountry != null ? selectedCountry.id != null ? selectedCountry.id.toString() : null : null);
-                intent.putExtra("year", selectedYear != null ? selectedYear : -1);
-
-                startActivity(intent);
+                fetchFilteredFilms(
+                        selectedGenre != null ? selectedGenre.id : null,
+                        selectedCountry != null ? selectedCountry.id : null,
+                        selectedYear != -1 ? selectedYear : null
+                );
+                bottomSheetDialog.dismiss();
             });
 
 
@@ -342,7 +321,6 @@ public class HomeActivity extends AppCompatActivity {
             });
         });
     }
-
 
     private void fetchGenresAndCountries(Runnable onComplete) {
         GenreAPIService genreAPI = ApiClient.getRetrofit().create(GenreAPIService.class);
@@ -407,11 +385,12 @@ public class HomeActivity extends AppCompatActivity {
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.menu_home) {
-                return true;
-            } else if (itemId == R.id.menu_explore) {
-                Intent intent = new Intent(HomeActivity.this, FilteredResultActivity.class);
+                Intent intent = new Intent(FilteredResultActivity.this, HomeActivity.class);
+                //bottomNavigationView.setSelectedItemId(R.id.menu_home);
                 startActivity(intent);
                 finish();
+                return true;
+            } else if (itemId == R.id.menu_explore) {
                 return true;
             } else if (itemId == R.id.menu_new) {
                 // TODO: Mở New & Hot
@@ -420,13 +399,14 @@ public class HomeActivity extends AppCompatActivity {
                 // TODO: Mở History
                 return true;
             } else if (itemId == R.id.menu_profile) {
-                Intent intent = new Intent(HomeActivity.this, UserProfileActivity.class);
+                Intent intent = new Intent(FilteredResultActivity.this, UserProfileActivity.class);
                 startActivity(intent);
                 return true;
             }
             return false;
         });
 
-        bottomNavigationView.setSelectedItemId(R.id.menu_home);
+        bottomNavigationView.setSelectedItemId(R.id.menu_explore);
+
     }
 }

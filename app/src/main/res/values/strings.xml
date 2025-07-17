@@ -32,5 +32,7 @@
     <string name="phone_invalid">Invalid phone number.</string>
     <string name="serie_poster">Serie Poster</string>
     <string name="filter">Filter</string>
+    <string name="expore">Expore</string>
+    <string name="film_poster">Film Poster</string>
     <!-- thêm các chuỗi khác nếu cần -->
 </resources>
