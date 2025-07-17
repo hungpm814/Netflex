@@ -15,8 +15,8 @@ import com.example.netflex.adapter.FilmAdapter;
 import com.example.netflex.adapter.SerieAdapter;
 import com.example.netflex.model.Film;
 import com.example.netflex.model.Serie;
-import com.example.netflex.resonseAPI.FilmResponse;
-import com.example.netflex.resonseAPI.SerieResponse;
+import com.example.netflex.responseAPI.FilmResponse;
+import com.example.netflex.responseAPI.SerieResponse;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.List;
