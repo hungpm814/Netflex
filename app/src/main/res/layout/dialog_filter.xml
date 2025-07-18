@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@drawable/filter_dialog_bg"
+    android:gravity="center_horizontal"
+    android:layout_gravity="center"
+    android:elevation="8dp">
+
+    <!-- Tabs -->
+    <LinearLayout
+        android:id="@+id/layoutTabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="16dp">
+
+        <Button
+            android:id="@+id/btnFilm"
+            android:layout_width="175dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:backgroundTint="#444444"
+            android:text="Films"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/btnSeries"
+            android:layout_width="175dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:backgroundTint="#444444"
+            android:text="Series"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Genre"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="8dp" />
+    <!-- Genre Chips -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupGenre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:singleSelection="true"
+            app:chipSpacing="10dp"
+            android:orientation="horizontal" />
+    </HorizontalScrollView>
+
+    <!-- Release Year -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Release Year"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="8dp" />
+
+    <Spinner
+        android:id="@+id/spinnerYear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/spinner_background"
+        android:padding="12dp"
+        android:popupBackground="@drawable/spinner_popup_background" />
+
+    <!-- Country -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Country"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="8dp" />
+
+    <Spinner
+        android:id="@+id/spinnerCountry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/spinner_background"
+        android:padding="12dp"
+        android:popupBackground="@drawable/spinner_popup_background"/>
+
+    <!-- Divider line -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#666666"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btnReset"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Reset"
+            android:backgroundTint="#444444"
+            android:textColor="@android:color/white" />
+
+        <Space android:layout_width="16dp" android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/btnApply"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Apply"
+            android:backgroundTint="#E50914"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+</LinearLayout>

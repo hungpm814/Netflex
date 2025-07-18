@@ -49,8 +49,11 @@ dependencies {
     implementation("androidx.media3:media3-ui:1.7.1")
     implementation("androidx.media3:media3-ui-compose:1.7.1")
     implementation("androidx.media3:media3-exoplayer-hls:1.7.1")
+
+    implementation("com.google.android.material:material:1.11.0")
     implementation("org.projectlombok:lombok:1.18.30")
     annotationProcessor("org.projectlombok:lombok:1.18.30")
+    
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

@@ -7,6 +7,11 @@
         android:title="@string/home" />
 
     <item
+        android:id="@+id/menu_explore"
+        android:icon="@drawable/ic_explore"
+        android:title="@string/expore" />
+
+    <item
         android:id="@+id/menu_new"
         android:icon="@drawable/baseline_local_fire_department_24"
         android:title="@string/new_hot" />
