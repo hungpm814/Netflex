@@ -30,7 +30,7 @@ import com.example.netflex.adapter.FilmAdapter;
 import com.example.netflex.model.Country;
 import com.example.netflex.model.Film;
 import com.example.netflex.model.Genre;
-import com.example.netflex.resonseAPI.FilmResponse;
+import com.example.netflex.responseAPI.FilmResponse;
 import com.example.netflex.resonseAPI.GenreResponse;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -49,8 +49,8 @@ import retrofit2.Response;
 public class FilteredResultActivity extends AppCompatActivity {
 
     private RecyclerView recyclerResults;
-    private List<Genre> genres;
-    private List<Country> countries;
+    private List<Genre> genres = new ArrayList<>();
+    private List<Country> countries = new ArrayList<>();
     private BottomNavigationView bottomNavigationView;
 
     @Override

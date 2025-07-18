@@ -31,9 +31,9 @@ import com.example.netflex.model.Country;
 import com.example.netflex.model.Film;
 import com.example.netflex.model.Genre;
 import com.example.netflex.model.Serie;
-import com.example.netflex.resonseAPI.FilmResponse;
+import com.example.netflex.responseAPI.FilmResponse;
 import com.example.netflex.resonseAPI.GenreResponse;
-import com.example.netflex.resonseAPI.SerieResponse;
+import com.example.netflex.responseAPI.SerieResponse;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -55,8 +55,9 @@ public class HomeActivity extends AppCompatActivity {
 
     private RecyclerView recyclerTrending;
     private RecyclerView recyclerReleases;
-    private List<Genre> genres;
-    private List<Country> countries;
+    private List<Country> countries = new ArrayList<>();
+    private List<Genre> genres = new ArrayList<>();
+
 
 
     private BottomNavigationView bottomNavigationView;
@@ -134,7 +135,7 @@ public class HomeActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<FilmResponse> call, Throwable t) {
-                Log.e("FILM_API", "Filter API failed", t);
+                Log.e("FILM_API", "Film API failed", t);
             }
         });
     }
