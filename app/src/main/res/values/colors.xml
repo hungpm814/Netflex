@@ -8,4 +8,11 @@
     <color name="light_blue_A200">#FF40C4FF</color>
     <color name="light_blue_A400">#FF00B0FF</color>
     <color name="black_overlay">#66000000</color>
+    <color name="purple_primary">#6B46C1</color>
+    <color name="green_checkbox">#10B981</color>
+    <color name="divider_color">#E5E7EB</color>
+    <color name="gradient_start">#F3E8FF</color>
+    <color name="gradient_end">#E0E7FF</color>
+    <color name="gray_text">#9CA3AF</color>
+    <color name="input_background">#F3F4F6</color>
 </resources>

@@ -1,8 +1,8 @@
 package com.example.netflex.APIServices;
 
 import com.example.netflex.model.Serie;
-import com.example.netflex.resonseAPI.SerieDetailResponse;
-import com.example.netflex.resonseAPI.SerieResponse;
+import com.example.netflex.responseAPI.SerieDetailResponse;
+import com.example.netflex.responseAPI.SerieResponse;
 
 import java.util.List;
 

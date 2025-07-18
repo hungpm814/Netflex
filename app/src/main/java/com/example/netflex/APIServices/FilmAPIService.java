@@ -1,7 +1,6 @@
 package com.example.netflex.APIServices;
 
-import com.example.netflex.model.Film;
-import com.example.netflex.resonseAPI.FilmResponse;
+import com.example.netflex.responseAPI.FilmResponse;
 import com.example.netflex.viewModels.FilmDetailViewModel;
 
 import java.util.UUID;

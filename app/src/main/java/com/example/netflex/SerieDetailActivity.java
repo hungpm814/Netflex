@@ -1,6 +1,5 @@
 package com.example.netflex;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
@@ -15,11 +14,12 @@ import com.example.netflex.APIServices.ApiClient;
 import com.example.netflex.APIServices.SerieAPIService;
 import com.example.netflex.adapter.EpisodeAdapter;
 import com.example.netflex.model.Episode;
+import com.example.netflex.model.Genre;
 import com.example.netflex.model.Serie;
-import com.example.netflex.resonseAPI.SerieDetailResponse;
-import com.google.gson.Gson;
+import com.example.netflex.responseAPI.SerieDetailResponse;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -32,6 +32,7 @@ public class SerieDetailActivity extends AppCompatActivity {
 
     private ImageView poster, btnBack;
     private TextView title, textAbout, textYear, textEpisodes;
+    private TextView textGenres, textCountries, textActors;
     private RecyclerView recyclerEpisodes;
 
     @Override
@@ -46,6 +47,9 @@ public class SerieDetailActivity extends AppCompatActivity {
         textAbout = findViewById(R.id.textAbout);
         textYear = findViewById(R.id.textYear);
         textEpisodes = findViewById(R.id.textEpisodes);
+        textGenres = findViewById(R.id.textGenres);
+        textCountries = findViewById(R.id.textCountries);
+        textActors = findViewById(R.id.textActors);
         recyclerEpisodes = findViewById(R.id.recyclerEpisodes);
 
         // Back Button
@@ -75,7 +79,14 @@ public class SerieDetailActivity extends AppCompatActivity {
                     // Bind data to UI
                     title.setText(serie.getTitle());
                     textAbout.setText(serie.getAbout());
-                    textYear.setText("Năm phát hành: " + serie.getProductionYear());
+                    textYear.setText("Year of release: " + serie.getProductionYear());
+
+                    // Format genres, countries, actors
+                    textGenres.setText("Category: " + genreListToString(response.body().getGenres()));
+                    textCountries.setText("Country: " + listToCommaSeparated(response.body().getCountries()));
+                    textActors.setText("Actors: " + actorsToString(response.body().getActors()));
+
+
                     Picasso.get().load(serie.getPoster()).into(poster);
 
                     // Setup RecyclerView for episodes
@@ -84,7 +95,7 @@ public class SerieDetailActivity extends AppCompatActivity {
                         recyclerEpisodes.setLayoutManager(new LinearLayoutManager(SerieDetailActivity.this));
                         recyclerEpisodes.setAdapter(adapter);
                     } else {
-                        textEpisodes.setText("No episodes found");
+                        textEpisodes.setText("Không tìm thấy tập phim nào");
                         recyclerEpisodes.setVisibility(RecyclerView.GONE);
                     }
 
@@ -99,5 +110,30 @@ public class SerieDetailActivity extends AppCompatActivity {
                 Log.e(TAG, "API Error", t);
             }
         });
+    }
+
+    // Helper method to convert list to comma-separated string
+    private String listToCommaSeparated(List<String> list) {
+        if (list == null || list.isEmpty()) return "No information";
+        return android.text.TextUtils.join(", ", list);
+    }
+    private String actorsToString(List<com.example.netflex.model.Actor> actors) {
+        if (actors == null || actors.isEmpty()) return "No information";
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < actors.size(); i++) {
+            builder.append(actors.get(i).getName());
+            if (i < actors.size() - 1) {
+                builder.append(", ");
+            }
+        }
+        return builder.toString();
+    }
+    private String genreListToString(List<Genre> genres) {
+        if (genres == null || genres.isEmpty()) return "No information";
+        List<String> names = new ArrayList<>();
+        for (Genre g : genres) {
+            names.add(g.getName());
+        }
+        return android.text.TextUtils.join(", ", names);
     }
 }
