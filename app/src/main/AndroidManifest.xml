@@ -20,7 +20,8 @@
         <activity
             android:name=".WatchFilmActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:exported="true" />
+            android:exported="true"
+            />
         <activity
             android:name=".FilmDetailActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -46,8 +47,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.LoginActivity" />
-        <activity android:name=".activity.RegisterActivity" />
+        <activity android:name=".activity.LoginActivity"
+            android:exported="true"
+            />
+        <activity android:name=".activity.RegisterActivity"
+            android:exported="true"
+            />
     </application>
 
 </manifest>
