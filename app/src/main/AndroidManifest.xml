@@ -29,24 +29,18 @@
             android:name=".SerieDetailActivity"
             android:exported="true" />
         <activity
-            android:name=".HomeActivity"
+            android:name=".activity.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".activity.LoginActivity" />
+        <!-- Không cần MAIN/LAUNCHER ở HomeActivity và MainActivity -->
+        <activity android:name=".HomeActivity" android:exported="true" />
+        <activity android:name=".MainActivity" android:exported="true" />
+
         <activity android:name=".activity.RegisterActivity" />
     </application>
 
