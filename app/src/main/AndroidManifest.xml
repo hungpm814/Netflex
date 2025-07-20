@@ -15,6 +15,10 @@
         android:theme="@style/Theme.Netflex"
         tools:targetApi="31">
         <activity
+            android:name=".FilteredResultActivity"
+            android:exported="true">
+        </activity>
+        <activity
             android:name=".UserProfileActivity"
             android:exported="true" />
         <activity
