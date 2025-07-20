@@ -12,6 +12,7 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +38,7 @@ public class FilmDetailActivity extends AppCompatActivity {
     TextView title, textAbout, textActor, textYear;
     Button btnTrailer, btnPlay;
     WebView webViewTrailer;
+    private ProgressBar progressBar;
     private View customView;
     private WebChromeClient.CustomViewCallback customViewCallback;
     private boolean isTrailerViewOpened = false;
@@ -54,9 +56,11 @@ public class FilmDetailActivity extends AppCompatActivity {
         setupViews();
 
         if (filmId != null) {
+            showLoading(true);
             call.enqueue(new Callback<>() {
                 @Override
                 public void onResponse(Call<FilmDetailViewModel> call, Response<FilmDetailViewModel> response) {
+                    showLoading(false);
                     if (response.isSuccessful() && response.body() != null) {
                         Film film = response.body().film;
                         List<Actor> actors = response.body().actors;
@@ -141,6 +145,7 @@ public class FilmDetailActivity extends AppCompatActivity {
         btnPlay = findViewById(R.id.btnPlay);
         webViewTrailer = findViewById(R.id.webViewTrailer);
         btnBack = findViewById(R.id.btnBack);
+        progressBar = findViewById(R.id.progressBar);
 
         WebSettings settings = webViewTrailer.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -218,4 +223,9 @@ public class FilmDetailActivity extends AppCompatActivity {
         }
     }
 
+    private void showLoading(boolean isLoading) {
+        if (progressBar != null) {
+            progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        }
+    }
 }
