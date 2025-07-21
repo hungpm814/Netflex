@@ -25,6 +25,8 @@ import com.example.netflex.APIServices.CountryAPIService;
 import com.example.netflex.APIServices.FilmAPIService;
 import com.example.netflex.APIServices.GenreAPIService;
 import com.example.netflex.APIServices.SerieAPIService;
+import com.example.netflex.activity.LoginActivity;
+import com.example.netflex.activity.SettingsActivity;
 import com.example.netflex.adapter.FilmAdapter;
 import com.example.netflex.adapter.SerieAdapter;
 import com.example.netflex.model.Country;
@@ -34,6 +36,7 @@ import com.example.netflex.model.Serie;
 import com.example.netflex.responseAPI.FilmResponse;
 import com.example.netflex.resonseAPI.GenreResponse;
 import com.example.netflex.responseAPI.SerieResponse;
+import com.example.netflex.utils.SharedPreferencesManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -65,6 +68,16 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        SharedPreferencesManager sharedPrefs = new SharedPreferencesManager(this);
+        if (!sharedPrefs.isLoggedIn()) {
+            // Nếu chưa đăng nhập thì chuyển sang LoginActivity
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // clear stack
+            startActivity(intent);
+            return; // không chạy tiếp
+        }
         setContentView(R.layout.activity_home);
 
         bottomNavigationView = findViewById(R.id.bottomNavigation);
@@ -420,11 +433,16 @@ public class HomeActivity extends AppCompatActivity {
             } else if (itemId == R.id.menu_History) {
                 // TODO: Mở History
                 return true;
-            } else if (itemId == R.id.menu_profile) {
-                Intent intent = new Intent(HomeActivity.this, UserProfileActivity.class);
+            } else if (itemId == R.id.menu_settings) {
+                Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
                 startActivity(intent);
                 return true;
             }
+//        } else if (itemId == R.id.menu_profile) {
+//                Intent intent = new Intent(HomeActivity.this, UserProfileActivity.class);
+//                startActivity(intent);
+//                return true;
+//            }
             return false;
         });
 

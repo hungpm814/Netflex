@@ -117,7 +117,6 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
         ResetPasswordRequest request = new ResetPasswordRequest();
         request.setEmail(userEmail);
-        request.setOtp(verifiedOtp);
         request.setNewPassword(newPassword);
 
         ApiClient.getAuthService().resetPassword(request).enqueue(new Callback<MessageResponse>() {

@@ -14,6 +14,7 @@ import com.example.netflex.MainActivity;
 import com.example.netflex.R;
 import com.example.netflex.requestAPI.auth.*;
 import com.example.netflex.resonseAPI.auth.*;
+import com.example.netflex.utils.SharedPreferencesManager;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -26,6 +27,8 @@ public class LoginActivity extends AppCompatActivity {
     private TextView tvError, tvSignUp, tvForgotPassword;
     private CheckBox cbRememberMe;
     private AuthApiService authApi;
+    private SharedPreferencesManager prefsManager;
+
 
     // Constants for SharedPreferences
     private static final String PREFS_NAME = "login_prefs";
@@ -38,6 +41,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        prefsManager = new SharedPreferencesManager(this);
 
         // Khởi tạo API
         authApi = ApiClient.getAuthService();
@@ -64,36 +68,16 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loadSavedLoginData() {
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        boolean rememberMe = prefs.getBoolean(KEY_REMEMBER, false);
-
-        if (rememberMe) {
-            String savedEmail = prefs.getString(KEY_EMAIL, "");
-            String savedPassword = prefs.getString(KEY_PASSWORD, "");
-
-            etEmail.setText(savedEmail);
-            etPassword.setText(savedPassword);
+        if (prefsManager.isRememberMeChecked()) {
+            etEmail.setText(prefsManager.getSavedEmail());
+            etPassword.setText(prefsManager.getSavedPassword());
             cbRememberMe.setChecked(true);
         }
     }
-
     private void saveLoginData(String email, String password, boolean remember) {
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-
-        if (remember) {
-            editor.putString(KEY_EMAIL, email);
-            editor.putString(KEY_PASSWORD, password);
-            editor.putBoolean(KEY_REMEMBER, true);
-        } else {
-            // Xóa dữ liệu đã lưu nếu không tick remember me
-            editor.remove(KEY_EMAIL);
-            editor.remove(KEY_PASSWORD);
-            editor.putBoolean(KEY_REMEMBER, false);
-        }
-
-        editor.apply();
+        prefsManager.saveRememberMeData(email, password, remember);
     }
+
 
     private void setClickListeners() {
         // Sự kiện đăng nhập
@@ -209,23 +193,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void saveUserSession(LoginResponse loginResponse) {
-        SharedPreferences appPrefs = getSharedPreferences(APP_PREFS, MODE_PRIVATE);
-        SharedPreferences.Editor editor = appPrefs.edit();
-
-        // Lưu thông tin user
-        editor.putString("userId", loginResponse.getUser().getId());
-        editor.putString("email", loginResponse.getUser().getEmail());
-        editor.putString("userName", loginResponse.getUser().getUserName());
-//        editor.putString("userRole", loginResponse.getUser().getRole()); // Nếu có role trong response
-        editor.putBoolean("isLoggedIn", true);
-
-        // Lưu token nếu có
-//        if (loginResponse.getToken() != null) {
-//            editor.putString("accessToken", loginResponse.getToken());
-//        }
-
-        editor.apply();
+        prefsManager.saveUserId(loginResponse.getUser().getId());
+        prefsManager.saveUserEmail(loginResponse.getUser().getEmail());
+        prefsManager.setLoggedIn(true);
     }
+
 
 //    private void navigateBasedOnRole(User user) {
 //        Intent intent;

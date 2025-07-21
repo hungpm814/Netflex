@@ -1,6 +1,5 @@
 package com.example.netflex.APIServices;
 
-
 import com.example.netflex.requestAPI.auth.*;
 import com.example.netflex.resonseAPI.MessageResponse;
 import com.example.netflex.resonseAPI.auth.*;
@@ -23,7 +22,6 @@ public interface AuthApiService {
     @POST("api/auth/logout")
     Call<MessageResponse> logout();
 
-
     @GET("api/auth/profile")
     Call<ProfileResponse> getProfile(@Query("userId") String userId);
 
@@ -32,6 +30,9 @@ public interface AuthApiService {
 
     @POST("api/auth/change-password")
     Call<MessageResponse> changePassword(@Body ChangePasswordRequest request);
+
+    @POST("api/auth/change-email")
+    Call<MessageResponse> changeEmail(@Body ChangeEmailRequest request);
 
     @POST("api/auth/forgot-password")
     Call<ForgotPasswordOtpResponse> forgotPassword(@Body ForgotPasswordRequest request);
