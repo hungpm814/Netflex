@@ -34,7 +34,7 @@ public interface AuthApiService {
     Call<MessageResponse> changePassword(@Body ChangePasswordRequest request);
 
     @POST("api/auth/forgot-password")
-    Call<ForgotPasswordTokenResponse> forgotPassword(@Body ForgotPasswordRequest request);
+    Call<ForgotPasswordOtpResponse> forgotPassword(@Body ForgotPasswordRequest request);
 
     @POST("api/auth/reset-password")
     Call<MessageResponse> resetPassword(@Body ResetPasswordRequest request);

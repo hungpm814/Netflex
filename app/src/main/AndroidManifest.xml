@@ -44,6 +44,9 @@
         <!-- Không cần MAIN/LAUNCHER ở HomeActivity và MainActivity -->
         <activity android:name=".HomeActivity" android:exported="true" />
         <activity android:name=".MainActivity" android:exported="true" />
+        <activity android:name=".activity.ForgotPasswordActivity" android:exported="true" />
+        <activity android:name=".activity.ForgotPasswordOtpActivity" android:exported="true" />
+        <activity android:name=".activity.ResetPasswordActivity" android:exported="true" />
 
         <activity android:name=".activity.RegisterActivity" />
     </application>
