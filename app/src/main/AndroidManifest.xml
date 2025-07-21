@@ -24,7 +24,8 @@
         <activity
             android:name=".WatchFilmActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:exported="true" />
+            android:exported="true"
+            />
         <activity
             android:name=".FilmDetailActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -33,22 +34,33 @@
             android:name=".SerieDetailActivity"
             android:exported="true" />
         <activity
-            android:name=".activity.LoginActivity"
+            android:name=".HomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <!-- Không cần MAIN/LAUNCHER ở HomeActivity và MainActivity -->
-        <activity android:name=".HomeActivity" android:exported="true" />
-        <activity android:name=".MainActivity" android:exported="true" />
         <activity android:name=".activity.ForgotPasswordActivity" android:exported="true" />
         <activity android:name=".activity.ForgotPasswordOtpActivity" android:exported="true" />
         <activity android:name=".activity.ResetPasswordActivity" android:exported="true" />
 
         <activity android:name=".activity.RegisterActivity" />
+        <activity android:name=".activity.LoginActivity"
+            android:exported="true"
+            />
     </application>
 
 </manifest>
