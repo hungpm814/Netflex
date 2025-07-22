@@ -40,6 +40,7 @@
     <string name="comment">Comment</string>
     <string name="view_more">View more</string>
     <string name="no_comments">This film has no comments.</string>
+    <string name="no_result_found">No result found</string>
     <string-array name="sort_options">
         <item>Mới nhất</item>
         <item>Cũ nhất</item>

@@ -136,6 +136,8 @@ public class HomeActivity extends AppCompatActivity {
                 intent.putExtra("countryId", (String) null);
                 intent.putExtra("year", -1);
                 startActivity(intent);
+
+                searchView.clearFocus();
                 return true;
             }
 

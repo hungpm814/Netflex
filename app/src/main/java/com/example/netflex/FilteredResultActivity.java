@@ -53,6 +53,7 @@ import retrofit2.Response;
 public class FilteredResultActivity extends AppCompatActivity {
 
     private RecyclerView recyclerResults;
+    private TextView txtNoResult;
     private List<Genre> genres = new ArrayList<>();
     private List<Country> countries = new ArrayList<>();
     private BottomNavigationView bottomNavigationView;
@@ -73,6 +74,8 @@ public class FilteredResultActivity extends AppCompatActivity {
         recyclerResults = findViewById(R.id.recyclerFiltered);
         recyclerResults.setLayoutManager(new GridLayoutManager(this, 3));
 
+        txtNoResult = findViewById(R.id.txtNoResult);
+
         // Nhận dữ liệu từ Intent
         String genreIdStr = getIntent().getStringExtra("genreId");
         String countryIdStr = getIntent().getStringExtra("countryId");
@@ -84,26 +87,13 @@ public class FilteredResultActivity extends AppCompatActivity {
         keyword = getIntent().getStringExtra("keyword");
 
         // Gọi API lấy dữ liệu lọc
-        FilmAPIService apiService = ApiClient.getRetrofit().create(FilmAPIService.class);
-        apiService.getFilms(1, genreId, countryId, selectedYear, keyword).enqueue(new Callback<FilmResponse>() {
-            @Override
-            public void onResponse(Call<FilmResponse> call, Response<FilmResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<Film> films = response.body().items;
-                    recyclerResults.setAdapter(new FilmAdapter(films));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<FilmResponse> call, Throwable t) {
-                Log.e("FILTER_RESULT", "Failed to fetch results", t);
-            }
-        });
+        fetchFilteredFilms(genreId, countryId, selectedYear, keyword);
 
         // Code cho phần Lọc
         findViewById(R.id.btnFilter).setOnClickListener(v -> showFilterDialog());
 
         SearchView searchView = findViewById(R.id.searchView);
+
         EditText searchEditText = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
         if (searchEditText != null) {
             searchEditText.setTextColor(Color.WHITE);
@@ -112,11 +102,13 @@ public class FilteredResultActivity extends AppCompatActivity {
         if (keyword != null && !keyword.isEmpty()) {
             searchView.setQuery(keyword, false);
         }
+        searchView.clearFocus();
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 fetchFilteredFilms(null,null,null,query);
+                searchView.clearFocus();
                 return true;
             }
 
@@ -144,7 +136,16 @@ public class FilteredResultActivity extends AppCompatActivity {
                     Log.d("FILM_API", "Filtered films count: " + films.size());
 
                     // Gán dữ liệu vào RecyclerView
-                    setupFilmRecyclerView(recyclerResults, films);
+                    //setupFilmRecyclerView(recyclerResults, films);
+
+                    if (films.isEmpty()) {
+                        txtNoResult.setVisibility(View.VISIBLE);
+                        recyclerResults.setVisibility(View.GONE);
+                    } else {
+                        txtNoResult.setVisibility(View.GONE);
+                        recyclerResults.setVisibility(View.VISIBLE);
+                        setupFilmRecyclerView(recyclerResults, films);
+                    }
                 } else {
                     Log.e("FILM_API", "Response code: " + response.code());
 
@@ -165,7 +166,6 @@ public class FilteredResultActivity extends AppCompatActivity {
 
     private void setupFilmRecyclerView(RecyclerView recyclerView, List<Film> films) {
         LinearLayoutManager layoutManager = new GridLayoutManager(this, 3);
-        //recyclerResults.setLayoutManager(new GridLayoutManager(this, 3));
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(new FilmAdapter(films));
     }

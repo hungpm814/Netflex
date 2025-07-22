@@ -71,6 +71,19 @@
                 android:orientation="horizontal" />
         </HorizontalScrollView>
 
+        <TextView
+            android:id="@+id/txtNoResult"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/no_result_found"
+            android:textSize="20sp"
+            android:textColor="@android:color/white"
+            android:gravity="center"
+            android:visibility="gone"
+            android:layout_marginTop="16dp"
+            />
+
+
         <!-- Grid danh sách phim -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerFiltered"
