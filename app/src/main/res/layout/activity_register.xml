@@ -31,29 +31,29 @@
             android:textSize="24sp"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tv_full_name_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="Full Name"
-            android:textColor="#333333"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+<!--        <TextView-->
+<!--            android:id="@+id/tv_full_name_label"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginBottom="8dp"-->
+<!--            android:text="Full Name"-->
+<!--            android:textColor="#333333"-->
+<!--            android:textSize="14sp"-->
+<!--            android:textStyle="bold" />-->
 
-        <EditText
-            android:id="@+id/et_full_name"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/input_background"
-            android:hint="Sara Croft"
-            android:inputType="textPersonName"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:textColor="#1A1A1A"
-            android:textColorHint="#999999"
-            android:textSize="16sp" />
+<!--        <EditText-->
+<!--            android:id="@+id/et_full_name"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="50dp"-->
+<!--            android:layout_marginBottom="20dp"-->
+<!--            android:background="@drawable/input_background"-->
+<!--            android:hint="Sara Croft"-->
+<!--            android:inputType="textPersonName"-->
+<!--            android:paddingLeft="16dp"-->
+<!--            android:paddingRight="16dp"-->
+<!--            android:textColor="#1A1A1A"-->
+<!--            android:textColorHint="#999999"-->
+<!--            android:textSize="16sp" />-->
 
         <!-- Email Input -->
 
@@ -227,7 +227,7 @@
             <TextView
                 android:id="@+id/tv_sign_in"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:text="Sign In"
                 android:textColor="#4285F4"
                 android:textSize="14sp"

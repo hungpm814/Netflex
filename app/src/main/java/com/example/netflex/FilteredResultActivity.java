@@ -26,6 +26,7 @@ import com.example.netflex.APIServices.ApiClient;
 import com.example.netflex.APIServices.CountryAPIService;
 import com.example.netflex.APIServices.FilmAPIService;
 import com.example.netflex.APIServices.GenreAPIService;
+import com.example.netflex.activity.SettingsActivity;
 import com.example.netflex.adapter.FilmAdapter;
 import com.example.netflex.model.Country;
 import com.example.netflex.model.Film;
@@ -398,8 +399,8 @@ public class FilteredResultActivity extends AppCompatActivity {
             } else if (itemId == R.id.menu_History) {
                 // TODO: Mở History
                 return true;
-            } else if (itemId == R.id.menu_profile) {
-                Intent intent = new Intent(FilteredResultActivity.this, UserProfileActivity.class);
+            } else if (itemId == R.id.menu_settings) {
+                Intent intent = new Intent(FilteredResultActivity.this, SettingsActivity.class);
                 startActivity(intent);
                 return true;
             }

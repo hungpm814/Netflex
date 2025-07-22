@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ForgotPasswordTokenResponse {
+public class ForgotPasswordOtpResponse {
     private String message;
-    private String token;
+    private String otp;
 }
