@@ -1,6 +1,7 @@
 package com.example.netflex.viewModels;
 
 import com.example.netflex.model.Actor;
+import com.example.netflex.model.Comment;
 import com.example.netflex.model.Film;
 
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
 public class FilmDetailViewModel {
     public Film film;
     public List<Actor> actors;
+    public List<Comment> comments;
 
     public Film getFilm() {
         return film;
@@ -23,5 +25,13 @@ public class FilmDetailViewModel {
 
     public void setActors(List<Actor> actors) {
         this.actors = actors;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 }
