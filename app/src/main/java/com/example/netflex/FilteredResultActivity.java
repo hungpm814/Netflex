@@ -10,6 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import androidx.appcompat.widget.SearchView;
+
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -53,6 +56,10 @@ public class FilteredResultActivity extends AppCompatActivity {
     private List<Genre> genres = new ArrayList<>();
     private List<Country> countries = new ArrayList<>();
     private BottomNavigationView bottomNavigationView;
+    private UUID genreId;
+    private UUID countryId;
+    private Integer selectedYear;
+    private String keyword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,13 +78,14 @@ public class FilteredResultActivity extends AppCompatActivity {
         String countryIdStr = getIntent().getStringExtra("countryId");
         int year = getIntent().getIntExtra("year", -1);
 
-        UUID genreId = genreIdStr != null ? UUID.fromString(genreIdStr) : null;
-        UUID countryId = countryIdStr != null ? UUID.fromString(countryIdStr) : null;
-        Integer selectedYear = (year != -1) ? year : null;
+        genreId = genreIdStr != null ? UUID.fromString(genreIdStr) : null;
+        countryId = countryIdStr != null ? UUID.fromString(countryIdStr) : null;
+        selectedYear = (year != -1) ? year : null;
+        keyword = getIntent().getStringExtra("keyword");
 
         // Gọi API lấy dữ liệu lọc
         FilmAPIService apiService = ApiClient.getRetrofit().create(FilmAPIService.class);
-        apiService.getFilms(1, genreId, countryId, selectedYear).enqueue(new Callback<FilmResponse>() {
+        apiService.getFilms(1, genreId, countryId, selectedYear, keyword).enqueue(new Callback<FilmResponse>() {
             @Override
             public void onResponse(Call<FilmResponse> call, Response<FilmResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -94,16 +102,40 @@ public class FilteredResultActivity extends AppCompatActivity {
 
         // Code cho phần Lọc
         findViewById(R.id.btnFilter).setOnClickListener(v -> showFilterDialog());
+
+        SearchView searchView = findViewById(R.id.searchView);
+        EditText searchEditText = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
+        if (searchEditText != null) {
+            searchEditText.setTextColor(Color.WHITE);
+            searchEditText.setHintTextColor(Color.GRAY);
+        }
+        if (keyword != null && !keyword.isEmpty()) {
+            searchView.setQuery(keyword, false);
+        }
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                fetchFilteredFilms(null,null,null,query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                keyword = newText;
+                return false;
+            }
+        });
     }
 
     // Fetch Filter Film
-    private void fetchFilteredFilms(UUID genreId, UUID countryId, Integer year) {
+    private void fetchFilteredFilms(UUID genreId, UUID countryId, Integer year, String keyword) {
         FilmAPIService apiService = ApiClient.getRetrofit().create(FilmAPIService.class);
         int page = 1;
 
         Integer yearParam = year != null ? year.intValue() : null;
 
-        Call<FilmResponse> call = apiService.getFilms(page, genreId, countryId, yearParam);
+        Call<FilmResponse> call = apiService.getFilms(page, genreId, countryId, yearParam, keyword);
         call.enqueue(new Callback<FilmResponse>() {
             @Override
             public void onResponse(Call<FilmResponse> call, Response<FilmResponse> response) {
@@ -308,7 +340,8 @@ public class FilteredResultActivity extends AppCompatActivity {
                 fetchFilteredFilms(
                         selectedGenre != null ? selectedGenre.id : null,
                         selectedCountry != null ? selectedCountry.id : null,
-                        selectedYear != -1 ? selectedYear : null
+                        selectedYear != -1 ? selectedYear : null,
+                        keyword
                 );
                 bottomSheetDialog.dismiss();
             });
