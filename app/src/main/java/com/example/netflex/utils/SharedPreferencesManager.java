@@ -78,6 +78,13 @@ public class SharedPreferencesManager {
         return sharedPreferences.getString(KEY_SAVED_PASSWORD, "");
     }
 
+    public void logout() {
+        editor.remove(KEY_USER_ID);
+        editor.remove(KEY_USER_EMAIL);
+        editor.remove(KEY_IS_LOGGED_IN);
+        editor.apply();
+    }
+
     // Xoá tất cả dữ liệu
     public void clearUserData() {
         editor.clear();

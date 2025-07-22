@@ -1,5 +1,6 @@
 package com.example.netflex.activity;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -33,7 +34,7 @@ public class SettingsActivity extends AppCompatActivity {
     private TextInputEditText etNewEmail, etPasswordForEmail;
     private TextView tvCurrentEmail;
     private CardView personalInfoCard;
-    private Button btnChangePassword, btnChangeEmail;
+    private Button btnChangePassword, btnChangeEmail, btnLogout;
 
     private AuthApiService authApiService;
     private SharedPreferencesManager sharedPreferencesManager;
@@ -60,6 +61,7 @@ public class SettingsActivity extends AppCompatActivity {
         tvCurrentEmail = findViewById(R.id.tv_current_email);
         btnChangePassword = findViewById(R.id.btn_change_password);
         btnChangeEmail = findViewById(R.id.btn_change_email);
+        btnLogout = findViewById(R.id.btn_logout);
        personalInfoCard = findViewById(R.id.card_personal_info);
     }
 
@@ -79,6 +81,8 @@ public class SettingsActivity extends AppCompatActivity {
             Intent intent = new Intent(SettingsActivity.this, UserProfileActivity.class);
             startActivity(intent);
         });
+        btnLogout.setOnClickListener(v -> showLogoutConfirmationDialog());
+
     }
 
     private void loadCurrentEmail() {
@@ -87,6 +91,31 @@ public class SettingsActivity extends AppCompatActivity {
             tvCurrentEmail.setText(currentEmail);
         }
     }
+
+    private void showLogoutConfirmationDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Logout")
+                .setMessage("Are you sure you want to logout?")
+                .setPositiveButton("Logout", (dialog, which) -> performLogout())
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    // Thêm method xử lý logout
+    private void performLogout() {
+        // Xóa tất cả dữ liệu user
+        sharedPreferencesManager.logout();
+
+        // Hiển thị toast thông báo
+        Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+
+        // Chuyển về màn hình login và xóa stack activity
+        Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
 
     private void changePassword() {
         String oldPassword = etOldPassword.getText().toString().trim();
