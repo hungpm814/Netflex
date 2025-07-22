@@ -12,6 +12,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import androidx.appcompat.widget.SearchView;
+
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -60,7 +63,7 @@ public class HomeActivity extends AppCompatActivity {
     private RecyclerView recyclerReleases;
     private List<Country> countries = new ArrayList<>();
     private List<Genre> genres = new ArrayList<>();
-
+    private String keyword;
 
 
     private BottomNavigationView bottomNavigationView;
@@ -89,7 +92,7 @@ public class HomeActivity extends AppCompatActivity {
         recyclerReleases = findViewById(R.id.recyclerReleases);
 
         //Fetch danh sách Film
-        fetchFilteredFilms(null, null, null);
+        fetchFilteredFilms(null, null, null, null);
 
         // Code cho phần Lọc
         findViewById(R.id.btnFilter).setOnClickListener(v -> showFilterDialog());
@@ -115,16 +118,46 @@ public class HomeActivity extends AppCompatActivity {
                 Log.e("API_ERROR", "Failed to fetch series", t);
             }
         });
+
+        SearchView searchView = findViewById(R.id.searchView);
+
+        EditText searchEditText = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
+        if (searchEditText != null) {
+            searchEditText.setTextColor(Color.WHITE);
+            searchEditText.setHintTextColor(Color.GRAY);
+        }
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Intent intent = new Intent(HomeActivity.this, FilteredResultActivity.class);
+                intent.putExtra("keyword", query);
+                intent.putExtra("genreId", (String) null);
+                intent.putExtra("countryId", (String) null);
+                intent.putExtra("year", -1);
+                startActivity(intent);
+
+                searchView.clearFocus();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                keyword = newText;
+                return false;
+            }
+        });
+
     }
 
     // Fetch Filter Film
-    private void fetchFilteredFilms(UUID genreId, UUID countryId, Integer year) {
+    private void fetchFilteredFilms(UUID genreId, UUID countryId, Integer year, String keyword) {
         FilmAPIService apiService = ApiClient.getRetrofit().create(FilmAPIService.class);
         int page = 1;
 
         Integer yearParam = year != null ? year.intValue() : null;
 
-        Call<FilmResponse> call = apiService.getFilms(page, genreId, countryId, yearParam);
+        Call<FilmResponse> call = apiService.getFilms(page, genreId, countryId, yearParam, keyword);
         call.enqueue(new Callback<FilmResponse>() {
             @Override
             public void onResponse(Call<FilmResponse> call, Response<FilmResponse> response) {
@@ -343,6 +376,7 @@ public class HomeActivity extends AppCompatActivity {
                 intent.putExtra("genreId", selectedGenre != null ? selectedGenre.id.toString() : null);
                 intent.putExtra("countryId", selectedCountry != null ? selectedCountry.id != null ? selectedCountry.id.toString() : null : null);
                 intent.putExtra("year", selectedYear != null ? selectedYear : -1);
+                intent.putExtra("keyword", keyword);
 
                 startActivity(intent);
             });

@@ -11,12 +11,13 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface FilmAPIService {
-    @GET("api/film") // viết thường đúng theo BE
+    @GET("api/film")
     Call<FilmResponse> getFilms(
             @Query("page") int page,
             @Query("genreId") UUID genreId,
             @Query("countryId") UUID countryId,
-            @Query("year") Integer year
+            @Query("year") Integer year,
+            @Query("keyword") String keyword
     );
     @GET("api/Film/{filmId}")
     Call<FilmDetailViewModel> getFilm(@Path("filmId") String filmId);

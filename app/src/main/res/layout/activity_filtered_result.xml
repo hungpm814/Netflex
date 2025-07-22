@@ -30,14 +30,20 @@
             <androidx.appcompat.widget.SearchView
                 android:id="@+id/searchView"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:queryHint="Search"
-                android:iconifiedByDefault="false"
                 android:background="@drawable/search_bg"
+                android:iconifiedByDefault="false"
+                android:queryHint="Search movies, series..."
                 android:padding="8dp"
-                android:textColorHint="#888"
-                android:textColor="@android:color/white" />
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                app:iconifiedByDefault="false"
+                app:queryHint="Search"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                />
 
             <ImageButton
                 android:id="@+id/btnFilter"
@@ -64,6 +70,19 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" />
         </HorizontalScrollView>
+
+        <TextView
+            android:id="@+id/txtNoResult"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/no_result_found"
+            android:textSize="20sp"
+            android:textColor="@android:color/white"
+            android:gravity="center"
+            android:visibility="gone"
+            android:layout_marginTop="16dp"
+            />
+
 
         <!-- Grid danh sách phim -->
         <androidx.recyclerview.widget.RecyclerView
