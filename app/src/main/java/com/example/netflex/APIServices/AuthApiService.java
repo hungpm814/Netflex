@@ -1,6 +1,5 @@
 package com.example.netflex.APIServices;
 
-
 import com.example.netflex.requestAPI.auth.*;
 import com.example.netflex.resonseAPI.MessageResponse;
 import com.example.netflex.resonseAPI.auth.*;
@@ -14,28 +13,30 @@ import retrofit2.http.Query;
 
 public interface AuthApiService {
 
-    @POST("api/Auth/login")
+    @POST("api/auth/login")
     Call<LoginResponse> login(@Body LoginRequest request);
 
-    @POST("api/Auth/register")
+    @POST("api/auth/register")
     Call<MessageResponse> register(@Body RegisterRequest request);
 
-    @POST("api/Auth/logout")
+    @POST("api/auth/logout")
     Call<MessageResponse> logout();
 
-
-    @GET("api/Auth/profile")
+    @GET("api/auth/profile")
     Call<ProfileResponse> getProfile(@Query("userId") String userId);
 
-    @PUT("api/Auth/profile")
+    @PUT("api/auth/profile")
     Call<MessageResponse> updateProfile(@Body UpdateProfileRequest request);
 
-    @POST("api/Auth/change-password")
+    @POST("api/auth/change-password")
     Call<MessageResponse> changePassword(@Body ChangePasswordRequest request);
 
-    @POST("api/Auth/forgot-password")
-    Call<ForgotPasswordTokenResponse> forgotPassword(@Body ForgotPasswordRequest request);
+    @POST("api/auth/change-email")
+    Call<MessageResponse> changeEmail(@Body ChangeEmailRequest request);
 
-    @POST("api/Auth/reset-password")
+    @POST("api/auth/forgot-password")
+    Call<ForgotPasswordOtpResponse> forgotPassword(@Body ForgotPasswordRequest request);
+
+    @POST("api/auth/reset-password")
     Call<MessageResponse> resetPassword(@Body ResetPasswordRequest request);
 }

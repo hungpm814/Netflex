@@ -34,5 +34,6 @@
     <string name="filter">Filter</string>
     <string name="expore">Expore</string>
     <string name="film_poster">Film Poster</string>
+    <string name="settings">Settings</string>
     <!-- thêm các chuỗi khác nếu cần -->
 </resources>

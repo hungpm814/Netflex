@@ -15,4 +15,5 @@
     <color name="gradient_end">#E0E7FF</color>
     <color name="gray_text">#9CA3AF</color>
     <color name="input_background">#F3F4F6</color>
+    <color name="orange_primary">#FF8C42</color>
 </resources>
