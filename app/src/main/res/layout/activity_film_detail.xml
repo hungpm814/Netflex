@@ -275,16 +275,16 @@
                     android:layout_marginBottom="8dp" />
 
                 <!-- Sorting options -->
-                <Spinner
-                    android:id="@+id/spinnerSort"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:entries="@array/sort_options"
-                    android:layout_gravity="end"
-                    android:backgroundTint="#444444"
-                    android:popupBackground="#222222"
-                    android:textColor="@color/white"
-                    android:layout_marginBottom="8dp" />
+<!--                <Spinner-->
+<!--                    android:id="@+id/spinnerSort"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:entries="@array/sort_options"-->
+<!--                    android:layout_gravity="end"-->
+<!--                    android:backgroundTint="#444444"-->
+<!--                    android:popupBackground="#222222"-->
+<!--                    android:textColor="@color/white"-->
+<!--                    android:layout_marginBottom="8dp" />-->
 
                 <!-- Comment input -->
                 <LinearLayout

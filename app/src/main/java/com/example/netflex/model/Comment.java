@@ -3,6 +3,7 @@ package com.example.netflex.model;
 import java.time.LocalDateTime;
 
 public class Comment {
+    private String id;
     private String content;
     private String userId;
     private User user;
@@ -12,6 +13,14 @@ public class Comment {
     private Serie Serie;
     private String createdAt;
     private String modifiedAt;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getContent() {
         return content;

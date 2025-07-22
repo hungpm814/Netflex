@@ -68,7 +68,6 @@ public class FilmDetailActivity extends AppCompatActivity {
     private String sort = "desc";
     private String filmId;
     private SharedPreferencesManager sharedPreferencesManager;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -162,8 +161,15 @@ public class FilmDetailActivity extends AppCompatActivity {
     private void setupCommentAdapter(List<Comment> comments) {
         recyclerView = findViewById(R.id.recyclerComments);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        commentAdapter = new CommentAdapter(comments);
+        commentAdapter = new CommentAdapter(this, comments, sharedPreferencesManager.getUserId());
         recyclerView.setAdapter(commentAdapter);
+    }
+
+    private void reloadComments() {
+        comments.clear();
+        textNoComments.setVisibility(GONE);
+        page = 1;
+        loadComments(filmId, page, sort);
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -194,9 +200,7 @@ public class FilmDetailActivity extends AppCompatActivity {
                     editTextComment.setText("");
 
                     // Reload comment list.
-                    comments.clear();
-                    page = 1;
-                    loadComments(filmId, page, sort);
+                    reloadComments();
                 } else {
                     Toast.makeText(FilmDetailActivity.this, "Failed to post comment", Toast.LENGTH_SHORT).show();
                 }
