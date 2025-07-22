@@ -35,5 +35,15 @@
     <string name="expore">Expore</string>
     <string name="film_poster">Film Poster</string>
     <string name="settings">Settings</string>
+    <string name="comments">Comments</string>
+    <string name="write_something">Write something...</string>
+    <string name="comment">Comment</string>
+    <string name="view_more">View more</string>
+    <string name="no_comments">This film has no comments.</string>
+    <string-array name="sort_options">
+        <item>Mới nhất</item>
+        <item>Cũ nhất</item>
+    </string-array>
+
     <!-- thêm các chuỗi khác nếu cần -->
 </resources>
