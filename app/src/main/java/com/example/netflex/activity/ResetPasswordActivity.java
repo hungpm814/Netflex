@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.netflex.R;
 import com.example.netflex.APIServices.ApiClient;
 import com.example.netflex.requestAPI.auth.ResetPasswordRequest;
-import com.example.netflex.resonseAPI.MessageResponse;
+import com.example.netflex.responseAPI.MessageResponse;
 import com.google.android.material.textfield.TextInputEditText;
 
 import retrofit2.Call;

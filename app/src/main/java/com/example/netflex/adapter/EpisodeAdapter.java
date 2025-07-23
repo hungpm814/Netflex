@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.netflex.R;
-import com.example.netflex.WatchFilmActivity;
+import com.example.netflex.activity.WatchFilmActivity;
 import com.example.netflex.model.Episode;
 
 import java.util.List;

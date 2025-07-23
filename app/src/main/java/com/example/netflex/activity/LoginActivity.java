@@ -1,7 +1,6 @@
 package com.example.netflex.activity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.*;
@@ -9,11 +8,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.netflex.APIServices.ApiClient;
 import com.example.netflex.APIServices.AuthApiService;
-import com.example.netflex.HomeActivity;
-import com.example.netflex.MainActivity;
 import com.example.netflex.R;
 import com.example.netflex.requestAPI.auth.*;
-import com.example.netflex.resonseAPI.auth.*;
+import com.example.netflex.responseAPI.auth.*;
 import com.example.netflex.utils.SharedPreferencesManager;
 
 import retrofit2.Call;
