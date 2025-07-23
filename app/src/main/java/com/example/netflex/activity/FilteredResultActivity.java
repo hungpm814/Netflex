@@ -62,6 +62,9 @@ public class FilteredResultActivity extends AppCompatActivity {
     private UUID genreId;
     private UUID countryId;
     private Integer selectedYear;
+    private Genre selectedGenre;
+    private Country selectedCountry;
+    private Boolean isFilmSelected = true;
     private String keyword;
 
     @Override
@@ -84,19 +87,21 @@ public class FilteredResultActivity extends AppCompatActivity {
         int year = getIntent().getIntExtra("year", -1);
         String type = getIntent().getStringExtra("type");
 
-
-
         genreId = genreIdStr != null ? UUID.fromString(genreIdStr) : null;
         countryId = countryIdStr != null ? UUID.fromString(countryIdStr) : null;
         selectedYear = (year != -1) ? year : null;
         keyword = getIntent().getStringExtra("keyword");
 
         // Gọi API lấy dữ liệu lọc
-        //fetchFilteredFilms(genreId, countryId, selectedYear, keyword);
+        fetchGenreById(genreId);
+        fetchCountryById(countryId);
+
         if ("film".equals(type)) {
             fetchFilteredFilms(genreId, countryId, selectedYear, keyword);
+            isFilmSelected = true;
         } else if ("serie".equals(type)) {
             fetchFilteredSeries(genreId, countryId, selectedYear, keyword);
+            isFilmSelected = false;
         }
 
         // Code cho phần Lọc
@@ -242,7 +247,15 @@ public class FilteredResultActivity extends AppCompatActivity {
             int selectedColor = Color.parseColor("#3399FF");
             int defaultColor = Color.parseColor("#444444");
 
-            btnFilm.setBackgroundTintList(ColorStateList.valueOf(selectedColor));
+            if (this.isFilmSelected) {
+                btnFilm.setBackgroundTintList(ColorStateList.valueOf(selectedColor));
+                btnSeries.setBackgroundTintList(ColorStateList.valueOf(defaultColor));
+                isFilmSelected.set(true);
+            } else {
+                btnFilm.setBackgroundTintList(ColorStateList.valueOf(defaultColor));
+                btnSeries.setBackgroundTintList(ColorStateList.valueOf(selectedColor));
+                isFilmSelected.set(false);
+            }
 
             btnFilm.setOnClickListener(v -> {
                 btnFilm.setBackgroundTintList(ColorStateList.valueOf(selectedColor));
@@ -297,7 +310,13 @@ public class FilteredResultActivity extends AppCompatActivity {
                 }
             };
             spinnerYear.setAdapter(yearAdapter);
-            spinnerYear.setSelection(0);
+            if (selectedYear != null) {
+                int yearIndex = years.indexOf(selectedYear);
+                if (yearIndex != -1) spinnerYear.setSelection(yearIndex);
+            } else {
+                spinnerYear.setSelection(0);
+            }
+
 
             // Country adapter
             Country allCountry = new Country();
@@ -336,7 +355,17 @@ public class FilteredResultActivity extends AppCompatActivity {
                 }
             };
             spinnerCountry.setAdapter(countryAdapter);
-            spinnerCountry.setSelection(0);
+            if (selectedCountry != null && selectedCountry.id != null) {
+                for (int i = 0; i < countryListWithAll.size(); i++) {
+                    if (selectedCountry.id.equals(countryListWithAll.get(i).id)) {
+                        spinnerCountry.setSelection(i);
+                        break;
+                    }
+                }
+            } else {
+                spinnerCountry.setSelection(0);
+            }
+
 
             // Tạo các Chip động cho Genre
             if (genres != null) {
@@ -359,12 +388,17 @@ public class FilteredResultActivity extends AppCompatActivity {
                                     .build()
                     );
 
+                    if (selectedGenre != null && selectedGenre.name.equals(genre.name)) {
+                        chip.setChecked(true);
+                        chip.setChipBackgroundColor(ColorStateList.valueOf(Color.parseColor("#3399FF")));
+                    }
+
                     // Khi được chọn => đổi màu nền
                     chip.setOnCheckedChangeListener((compoundButton, isChecked) -> {
                         if (isChecked) {
-                            chip.setChipBackgroundColor(ColorStateList.valueOf(Color.parseColor("#3399FF"))); // xanh nước biển nhạt
+                            chip.setChipBackgroundColor(ColorStateList.valueOf(Color.parseColor("#3399FF")));
                         } else {
-                            chip.setChipBackgroundColor(ColorStateList.valueOf(Color.parseColor("#444444"))); // màu gốc
+                            chip.setChipBackgroundColor(ColorStateList.valueOf(Color.parseColor("#444444")));
                         }
                     });
 
@@ -383,18 +417,19 @@ public class FilteredResultActivity extends AppCompatActivity {
 
             // Gán nút Apply
             view.findViewById(R.id.btnApply).setOnClickListener(v -> {
-                Integer selectedYear = (Integer) spinnerYear.getSelectedItem();
-                Country selectedCountry = (Country) spinnerCountry.getSelectedItem();
+                selectedYear = (Integer) spinnerYear.getSelectedItem();
+                selectedCountry = (Country) spinnerCountry.getSelectedItem();
 
                 // Lấy Chip Genre được chọn
                 int selectedChipId = chipGroupGenre.getCheckedChipId();
-                Genre selectedGenre = null;
+                selectedGenre = null;
                 if (selectedChipId != -1) {
                     Chip selectedChip = chipGroupGenre.findViewById(selectedChipId);
                     selectedGenre = genres.stream()
                             .filter(g -> g.name.equals(selectedChip.getText().toString()))
                             .findFirst().orElse(null);
                 }
+                this.isFilmSelected = isFilmSelected.get();
 
                 if (isFilmSelected.get()) {
                     fetchFilteredFilms(
@@ -478,6 +513,52 @@ public class FilteredResultActivity extends AppCompatActivity {
                         runOnUiThread(onComplete);
                     }
                 });
+            }
+        });
+    }
+
+    private void fetchCountryById(UUID countryId) {
+        CountryAPIService apiService = ApiClient.getRetrofit().create(CountryAPIService.class);
+
+        Call<Country> call = apiService.getCountryById(countryId);
+        call.enqueue(new Callback<Country>() {
+            @Override
+            public void onResponse(Call<Country> call, Response<Country> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Country country = response.body();
+                    Log.d("API_COUNTRY", "Country name: " + country.name);
+                    selectedCountry = country;
+                } else {
+                    Log.e("API_COUNTRY", "Failed to get country. Code: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Country> call, Throwable t) {
+                Log.e("API_COUNTRY", "API call failed", t);
+            }
+        });
+    }
+
+    private void fetchGenreById(UUID genreId) {
+        GenreAPIService apiService = ApiClient.getRetrofit().create(GenreAPIService.class);
+
+        Call<Genre> call = apiService.getGenreById(genreId);
+        call.enqueue(new Callback<Genre>() {
+            @Override
+            public void onResponse(Call<Genre> call, Response<Genre> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Genre genre = response.body();
+                    Log.d("API_COUNTRY", "Country name: " + genre.name);
+                    selectedGenre = genre;
+                } else {
+                    Log.e("API_COUNTRY", "Failed to get country. Code: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Genre> call, Throwable t) {
+                Log.e("API_COUNTRY", "API call failed", t);
             }
         });
     }
