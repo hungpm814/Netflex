@@ -19,6 +19,7 @@ import com.example.netflex.requestAPI.auth.ChangePasswordRequest;
 import com.example.netflex.responseAPI.MessageResponse;
 import com.example.netflex.APIServices.ApiClient;
 import com.example.netflex.utils.SharedPreferencesManager;
+import com.example.netflex.utils.MyListManager;
 import com.google.android.material.textfield.TextInputEditText;
 
 import retrofit2.Call;
@@ -30,12 +31,13 @@ public class SettingsActivity extends AppCompatActivity {
     private ImageView btnBack;
     private TextInputEditText etOldPassword, etNewPassword, etConfirmNewPassword;
     private TextInputEditText etNewEmail, etPasswordForEmail;
-    private TextView tvCurrentEmail;
-    private CardView personalInfoCard;
+    private TextView tvCurrentEmail, textMySeriesCount;
+    private CardView personalInfoCard, mySeriesCard;
     private Button btnChangePassword, btnChangeEmail, btnLogout;
 
     private AuthApiService authApiService;
     private SharedPreferencesManager sharedPreferencesManager;
+    private MyListManager myListManager;
     private String userId;
 
     @Override
@@ -47,6 +49,7 @@ public class SettingsActivity extends AppCompatActivity {
         initServices();
         setupClickListeners();
         loadCurrentEmail();
+        updateMySeriesCount();
     }
 
     private void initViews() {
@@ -60,12 +63,15 @@ public class SettingsActivity extends AppCompatActivity {
         btnChangePassword = findViewById(R.id.btn_change_password);
         btnChangeEmail = findViewById(R.id.btn_change_email);
         btnLogout = findViewById(R.id.btn_logout);
-       personalInfoCard = findViewById(R.id.card_personal_info);
+        personalInfoCard = findViewById(R.id.card_personal_info);
+        mySeriesCard = findViewById(R.id.card_my_series);
+        textMySeriesCount = findViewById(R.id.textMySeriesCount);
     }
 
     private void initServices() {
         authApiService = ApiClient.getRetrofit().create(AuthApiService.class);
         sharedPreferencesManager = new SharedPreferencesManager(this);
+        myListManager = new MyListManager(this);
         userId = sharedPreferencesManager.getUserId();
     }
 
@@ -79,6 +85,12 @@ public class SettingsActivity extends AppCompatActivity {
             Intent intent = new Intent(SettingsActivity.this, UserProfileActivity.class);
             startActivity(intent);
         });
+        
+        mySeriesCard.setOnClickListener(v -> {
+            Intent intent = new Intent(SettingsActivity.this, MySeriesActivity.class);
+            startActivity(intent);
+        });
+        
         btnLogout.setOnClickListener(v -> showLogoutConfirmationDialog());
 
     }
@@ -88,6 +100,21 @@ public class SettingsActivity extends AppCompatActivity {
         if (!TextUtils.isEmpty(currentEmail)) {
             tvCurrentEmail.setText(currentEmail);
         }
+    }
+
+    private void updateMySeriesCount() {
+        int seriesCount = myListManager.getMySeriesCount();
+        if (seriesCount > 0) {
+            textMySeriesCount.setText("Following " + seriesCount + " series");
+        } else {
+            textMySeriesCount.setText("View your followed series");
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateMySeriesCount(); // Update count when returning to this activity
     }
 
     private void showLogoutConfirmationDialog() {

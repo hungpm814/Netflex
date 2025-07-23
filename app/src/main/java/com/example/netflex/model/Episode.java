@@ -8,6 +8,7 @@ public class Episode {
     public String poster;
     public String path;
     public String trailer;
+    public String serieId;  // ID của series chứa episode này
 
     // Getter methods
     public String getId() {
@@ -66,8 +67,16 @@ public class Episode {
         this.trailer = trailer;
     }
 
+    public String getSerieId() {
+        return serieId;
+    }
+
+    public void setSerieId(String serieId) {
+        this.serieId = serieId;
+    }
+
     // Optional: Constructor
-    public Episode(String id, String title, String description, String year, String poster, String path, String trailer) {
+    public Episode(String id, String title, String description, String year, String poster, String path, String trailer, String serieId) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -75,6 +84,7 @@ public class Episode {
         this.poster = poster;
         this.path = path;
         this.trailer = trailer;
+        this.serieId = serieId;
     }
 
     public Episode() {
