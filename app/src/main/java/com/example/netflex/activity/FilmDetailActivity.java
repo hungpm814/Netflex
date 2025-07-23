@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -114,6 +115,13 @@ public class FilmDetailActivity extends AppCompatActivity {
 
                         // Update views' content on the layout.
                         prepareViewsData(viewModel);
+
+                        // Save to watch history when viewing film detail
+                        SharedPreferencesManager prefsManager = new SharedPreferencesManager(FilmDetailActivity.this);
+                        prefsManager.addToWatchHistory(film.getId(), film.getTitle(), film.getPoster());
+                    } else {
+                        Toast.makeText(FilmDetailActivity.this, "Failed to load film details", Toast.LENGTH_SHORT)
+                                .show();
                     }
                 }
 
@@ -333,76 +341,91 @@ public class FilmDetailActivity extends AppCompatActivity {
         }
 
 
+        if (webViewTrailer != null) {
+            btnBack = findViewById(R.id.btnBack);
+            progressBar = findViewById(R.id.progressBar);
+            btnLoadMore = findViewById(R.id.btnLoadMore);
+            textNoComments = findViewById(R.id.no_comments);
+            editTextComment = findViewById(R.id.editTextComment);
+            btnSendComment = findViewById(R.id.btnSendComment);
 
-        WebSettings settings = webViewTrailer.getSettings();
-        settings.setJavaScriptEnabled(true);
-        settings.setDomStorageEnabled(true);
+            WebSettings settings = webViewTrailer.getSettings();
+            settings.setJavaScriptEnabled(true);
+            settings.setDomStorageEnabled(true);
 
-        btnBack.setOnClickListener(v -> finish());
+            btnBack.setOnClickListener(v -> finish());
 
-        btnSendComment.setOnClickListener(v -> {
-            postComment();
-        });
+            btnSendComment.setOnClickListener(v -> {
+                postComment();
+            });
 
-        btnLoadMore.setOnClickListener(v -> {
-            page++;
-            loadComments(getIntent().getStringExtra("film_id"), page, sort);
-        });
+            btnLoadMore.setOnClickListener(v -> {
+                page++;
+                loadComments(getIntent().getStringExtra("film_id"), page, sort);
+            });
 
-        webViewTrailer.setWebChromeClient(new WebChromeClient() {
-            @Override
-            public void onShowCustomView(View view, CustomViewCallback callback) {
-                if (customView != null) {
-                    callback.onCustomViewHidden();
-                    return;
+            webViewTrailer.setWebChromeClient(new WebChromeClient() {
+                @Override
+                public void onShowCustomView(View view, CustomViewCallback callback) {
+                    if (customView != null) {
+                        callback.onCustomViewHidden();
+                        return;
+                    }
+
+                    customView = view;
+                    customViewCallback = callback;
+
+                    // Hide trailer webView.
+                    webViewTrailer.setVisibility(GONE);
+
+                    // Open full screen mode.
+                    FrameLayout decorView = (FrameLayout) getWindow().getDecorView();
+                    decorView.addView(customView, new FrameLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT
+                    ));
+
+                    // Hide system navigation buttons.
+                    getWindow().getDecorView().setSystemUiVisibility(
+                            View.SYSTEM_UI_FLAG_FULLSCREEN |
+                                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    );
                 }
 
-                customView = view;
-                customViewCallback = callback;
+                @Override
+                public void onHideCustomView() {
+                    if (customView == null) return;
 
-                // Hide trailer webView.
-                webViewTrailer.setVisibility(GONE);
+                    // Remove full screen mode.
+                    FrameLayout decorView = (FrameLayout) getWindow().getDecorView();
+                    decorView.removeView(customView);
+                    customView = null;
+                    webViewTrailer.setVisibility(VISIBLE);
 
-                // Open full screen mode.
-                FrameLayout decorView = (FrameLayout) getWindow().getDecorView();
-                decorView.addView(customView, new FrameLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
-                ));
+                    // Show system navigation buttons.
+                    getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
 
-                // Hide system navigation buttons.
-                getWindow().getDecorView().setSystemUiVisibility(
-                        View.SYSTEM_UI_FLAG_FULLSCREEN |
-                                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                );
-            }
+                    customViewCallback.onCustomViewHidden();
+                }
+            });
+            webViewTrailer.setWebViewClient(new WebViewClient());
+        } else {
+            Log.e("FilmDetail", "WebView not found in layout");
+        }
 
-            @Override
-            public void onHideCustomView() {
-                if (customView == null) return;
-
-                // Remove full screen mode.
-                FrameLayout decorView = (FrameLayout) getWindow().getDecorView();
-                decorView.removeView(customView);
-                customView = null;
-                webViewTrailer.setVisibility(VISIBLE);
-
-                // Show system navigation buttons.
-                getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-
-                customViewCallback.onCustomViewHidden();
-            }
-        });
     }
 
     private void playFilm(Film film) {
+        SharedPreferencesManager prefsManager = new SharedPreferencesManager(this);
+        prefsManager.addToWatchHistory(film.getId(), film.getTitle(), film.getPoster());
         Intent intent = new Intent(FilmDetailActivity.this, WatchFilmActivity.class);
         intent.putExtra("video_url", film.getPath());
         startActivity(intent);
     }
 
     private void toggleTrailerView(Film film) {
+        if (webViewTrailer == null) return;
         isTrailerViewOpened = !isTrailerViewOpened;
         Log.d("trailer", "isTrailerViewOpened: " + isTrailerViewOpened);
 
