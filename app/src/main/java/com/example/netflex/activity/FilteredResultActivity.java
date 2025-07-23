@@ -644,6 +644,8 @@ public class FilteredResultActivity extends AppCompatActivity {
                 return true;
             } else if (itemId == R.id.menu_History) {
                 // TODO: Mở History
+                Intent intent = new Intent(FilteredResultActivity.this, WatchHistoryActivity.class);
+                startActivity(intent);
                 return true;
             } else if (itemId == R.id.menu_settings) {
                 Intent intent = new Intent(FilteredResultActivity.this, SettingsActivity.class);

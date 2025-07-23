@@ -11,6 +11,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
+        android:id="@+id/myScrollView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -44,16 +45,6 @@
                 android:padding="8dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-
-            <WebView
-                android:id="@+id/webViewTrailer"
-                android:layout_width="350dp"
-                android:layout_height="200dp"
-                android:layout_marginTop="16dp"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/actionButtons" />
 
             <androidx.media3.ui.PlayerView
                 android:id="@+id/playerView"
@@ -144,6 +135,25 @@
                     android:textColor="#FFFFFF"
                     android:textSize="14sp"
                     android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/textRating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rating: N/A"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="4dp" />
+
+                <RatingBar
+                    android:id="@+id/ratingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:rating="0"
+                    android:numStars="5"
+                    android:stepSize="0.5"
+                    android:isIndicator="true"
+                    android:layout_marginBottom="8dp" />
 
                 <!-- Actors -->
                 <TextView
@@ -193,25 +203,53 @@
 
                 <!-- Rated -->
                 <LinearLayout
+                    android:id="@+id/layoutRating"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:clickable="true"
+                    android:focusable="true">
 
-                    <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:background="@drawable/thumb_up_24px"
-                        android:backgroundTint="@color/white" />
-
-                    <TextView
+                    <LinearLayout
+                        android:id="@+id/layoutRateContent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/rate"
-                        android:textColor="#CCCCCC"
-                        android:textSize="12sp" />
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:src="@drawable/thumb_up_24px"
+                            app:tint="@color/white" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/rate"
+                            android:textColor="#CCCCCC"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <!-- Hidden RatingBar -->
+                    <RatingBar
+                        android:id="@+id/ratingBarFilm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:numStars="5"
+                        android:stepSize="1"
+                        android:isIndicator="false"
+                        android:visibility="gone"
+                        android:layout_marginTop="8dp"
+                        android:theme="@style/ThemeOverlay.AppCompat.Dark"
+                    style="?android:attr/ratingBarStyleSmall" />
+
+
                 </LinearLayout>
+
+
 
                 <!-- Share -->
                 <LinearLayout
@@ -250,6 +288,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/btnPlay" />
 
+            <WebView
+                android:id="@+id/webViewTrailer"
+                android:layout_width="350dp"
+                android:layout_height="200dp"
+                android:layout_marginTop="16dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/actionButtons" />
+
             <!-- Comment Section -->
             <LinearLayout
                 android:id="@+id/commentSection"
@@ -260,7 +308,7 @@
                 android:layout_marginBottom="32dp"
                 android:padding="16dp"
                 android:background="#111111"
-                app:layout_constraintTop_toBottomOf="@id/actionButtons"
+                app:layout_constraintTop_toBottomOf="@id/webViewTrailer"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 

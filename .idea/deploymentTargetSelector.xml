@@ -5,15 +5,12 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-<<<<<<< Updated upstream
-      <SelectionState runConfigName="LoginActivity">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="HomeActivity (1)">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
+<<<<<<< HEAD
 =======
->>>>>>> Stashed changes
+      <SelectionState runConfigName="HomeActivity">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+>>>>>>> upstream/main
     </selectionStates>
   </component>
 </project>

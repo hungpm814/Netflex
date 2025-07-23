@@ -17,8 +17,8 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface CommentAPIService {
-    @GET("api/comments/paged/{filmId}")
-    Call<CommentListResponse> getComments(@Path("filmId") String filmId,
+    @GET("api/comments/paged/{id}")
+    Call<CommentListResponse> getComments(@Path("id") String id,
                                           @Query("page") int page,
                                           @Query("pageSize") int pageSize,
                                           @Query("sort") String sort);
