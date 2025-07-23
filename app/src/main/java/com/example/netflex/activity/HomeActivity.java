@@ -45,6 +45,7 @@ import com.google.android.material.chip.ChipGroup;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -208,20 +209,24 @@ public class HomeActivity extends AppCompatActivity {
             Button btnFilm = view.findViewById(R.id.btnFilm);
             Button btnSeries = view.findViewById(R.id.btnSeries);
 
+            AtomicReference<Boolean> isFilmSelected = new AtomicReference<>(true);
+
             // Màu mặc định và màu khi chọn
-            int selectedColor = Color.parseColor("#3399FF"); // xanh nước biển nhạt
+            int selectedColor = Color.parseColor("#3399FF");
             int defaultColor = Color.parseColor("#444444");
+
+            btnFilm.setBackgroundTintList(ColorStateList.valueOf(selectedColor));
 
             btnFilm.setOnClickListener(v -> {
                 btnFilm.setBackgroundTintList(ColorStateList.valueOf(selectedColor));
                 btnSeries.setBackgroundTintList(ColorStateList.valueOf(defaultColor));
-                // TODO: Đánh dấu đang chọn lọc phim
+                isFilmSelected.set(true);
             });
 
             btnSeries.setOnClickListener(v -> {
                 btnFilm.setBackgroundTintList(ColorStateList.valueOf(defaultColor));
                 btnSeries.setBackgroundTintList(ColorStateList.valueOf(selectedColor));
-                // TODO: Đánh dấu đang chọn lọc series
+                isFilmSelected.set(false);
             });
 
             // Tạo danh sách năm
@@ -366,6 +371,11 @@ public class HomeActivity extends AppCompatActivity {
 
                 // Tạo Intent để mở trang mới
                 Intent intent = new Intent(HomeActivity.this, FilteredResultActivity.class);
+                if (isFilmSelected.get()) {
+                    intent.putExtra("type", "film");
+                } else {
+                    intent.putExtra("type", "serie");
+                }
                 intent.putExtra("genreId", selectedGenre != null ? selectedGenre.id.toString() : null);
                 intent.putExtra("countryId", selectedCountry != null ? selectedCountry.id != null ? selectedCountry.id.toString() : null : null);
                 intent.putExtra("year", selectedYear != null ? selectedYear : -1);

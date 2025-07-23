@@ -26,13 +26,17 @@ import com.example.netflex.APIServices.ApiClient;
 import com.example.netflex.APIServices.CountryAPIService;
 import com.example.netflex.APIServices.FilmAPIService;
 import com.example.netflex.APIServices.GenreAPIService;
+import com.example.netflex.APIServices.SerieAPIService;
 import com.example.netflex.R;
 import com.example.netflex.adapter.FilmAdapter;
+import com.example.netflex.adapter.SerieAdapter;
 import com.example.netflex.model.Country;
 import com.example.netflex.model.Film;
 import com.example.netflex.model.Genre;
+import com.example.netflex.model.Serie;
 import com.example.netflex.responseAPI.FilmResponse;
 import com.example.netflex.responseAPI.GenreResponse;
+import com.example.netflex.responseAPI.SerieResponse;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -42,6 +46,7 @@ import com.google.android.material.chip.ChipGroup;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -77,6 +82,9 @@ public class FilteredResultActivity extends AppCompatActivity {
         String genreIdStr = getIntent().getStringExtra("genreId");
         String countryIdStr = getIntent().getStringExtra("countryId");
         int year = getIntent().getIntExtra("year", -1);
+        String type = getIntent().getStringExtra("type");
+
+
 
         genreId = genreIdStr != null ? UUID.fromString(genreIdStr) : null;
         countryId = countryIdStr != null ? UUID.fromString(countryIdStr) : null;
@@ -84,7 +92,12 @@ public class FilteredResultActivity extends AppCompatActivity {
         keyword = getIntent().getStringExtra("keyword");
 
         // Gọi API lấy dữ liệu lọc
-        fetchFilteredFilms(genreId, countryId, selectedYear, keyword);
+        //fetchFilteredFilms(genreId, countryId, selectedYear, keyword);
+        if ("film".equals(type)) {
+            fetchFilteredFilms(genreId, countryId, selectedYear, keyword);
+        } else if ("serie".equals(type)) {
+            fetchFilteredSeries(genreId, countryId, selectedYear, keyword);
+        }
 
         // Code cho phần Lọc
         findViewById(R.id.btnFilter).setOnClickListener(v -> showFilterDialog());
@@ -161,10 +174,55 @@ public class FilteredResultActivity extends AppCompatActivity {
         });
     }
 
+    private void fetchFilteredSeries(UUID genreId, UUID countryId, Integer year, String keyword) {
+        SerieAPIService apiService = ApiClient.getRetrofit().create(SerieAPIService.class);
+        int page = 1;
+
+        Integer yearParam = year != null ? year.intValue() : null;
+
+        Call<SerieResponse> call = apiService.getSeriesFilter(page, genreId, countryId, yearParam, keyword);
+        call.enqueue(new Callback<SerieResponse>() {
+            @Override
+            public void onResponse(Call<SerieResponse> call, Response<SerieResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Serie> series = response.body().items;
+                    Log.d("SERIE_API", "Filtered series count: " + series.size());
+
+                    if (series.isEmpty()) {
+                        txtNoResult.setVisibility(View.VISIBLE);
+                        recyclerResults.setVisibility(View.GONE);
+                    } else {
+                        txtNoResult.setVisibility(View.GONE);
+                        recyclerResults.setVisibility(View.VISIBLE);
+                        setupSerieRecyclerView(recyclerResults, series);
+                    }
+                } else {
+                    Log.e("SERIE_API", "Response code: " + response.code());
+
+                    SerieResponse body = response.body();
+                    if (body == null || body.items == null) {
+                        Log.e("SERIE_API", "Body or items null");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SerieResponse> call, Throwable t) {
+                Log.e("SERIE_API", "Filter API failed", t);
+            }
+        });
+    }
+
+
     private void setupFilmRecyclerView(RecyclerView recyclerView, List<Film> films) {
         LinearLayoutManager layoutManager = new GridLayoutManager(this, 3);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(new FilmAdapter(films));
+    }
+    private void setupSerieRecyclerView(RecyclerView recyclerView, List<Serie> series) {
+        LinearLayoutManager layoutManager = new GridLayoutManager(this, 3);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(new SerieAdapter(this, series));
     }
 
     private void showFilterDialog() {
@@ -178,20 +236,24 @@ public class FilteredResultActivity extends AppCompatActivity {
             Button btnFilm = view.findViewById(R.id.btnFilm);
             Button btnSeries = view.findViewById(R.id.btnSeries);
 
+            AtomicReference<Boolean> isFilmSelected = new AtomicReference<>(true);
+
             // Màu mặc định và màu khi chọn
             int selectedColor = Color.parseColor("#3399FF");
             int defaultColor = Color.parseColor("#444444");
 
+            btnFilm.setBackgroundTintList(ColorStateList.valueOf(selectedColor));
+
             btnFilm.setOnClickListener(v -> {
                 btnFilm.setBackgroundTintList(ColorStateList.valueOf(selectedColor));
                 btnSeries.setBackgroundTintList(ColorStateList.valueOf(defaultColor));
-                // TODO: Đánh dấu đang chọn lọc phim
+                isFilmSelected.set(true);
             });
 
             btnSeries.setOnClickListener(v -> {
                 btnFilm.setBackgroundTintList(ColorStateList.valueOf(defaultColor));
                 btnSeries.setBackgroundTintList(ColorStateList.valueOf(selectedColor));
-                // TODO: Đánh dấu đang chọn lọc series
+                isFilmSelected.set(false);
             });
 
             // Tạo danh sách năm
@@ -334,12 +396,22 @@ public class FilteredResultActivity extends AppCompatActivity {
                             .findFirst().orElse(null);
                 }
 
-                fetchFilteredFilms(
-                        selectedGenre != null ? selectedGenre.id : null,
-                        selectedCountry != null ? selectedCountry.id : null,
-                        selectedYear != -1 ? selectedYear : null,
-                        keyword
-                );
+                if (isFilmSelected.get()) {
+                    fetchFilteredFilms(
+                            selectedGenre != null ? selectedGenre.id : null,
+                            selectedCountry != null ? selectedCountry.id : null,
+                            selectedYear != -1 ? selectedYear : null,
+                            keyword
+                    );
+                } else {
+                    fetchFilteredSeries(
+                            selectedGenre != null ? selectedGenre.id : null,
+                            selectedCountry != null ? selectedCountry.id : null,
+                            selectedYear != -1 ? selectedYear : null,
+                            keyword
+                    );
+                }
+
                 bottomSheetDialog.dismiss();
             });
 
