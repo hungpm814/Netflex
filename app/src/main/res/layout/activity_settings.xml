@@ -134,6 +134,94 @@
                     android:alpha="0.1" />
             </androidx.cardview.widget.CardView>
 
+            <!-- My Series Card -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_my_series"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="#2A2A2A"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="20dp"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/personal_info_background">
+
+                    <!-- Icon Container with Gradient Background -->
+                    <LinearLayout
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@drawable/icon_gradient_background"
+                        android:gravity="center"
+                        android:elevation="2dp">
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:src="@drawable/baseline_local_fire_department_24"
+                            app:tint="#ffffff"
+                            android:contentDescription="Series Icon" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="16dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="My Series"
+                            android:textColor="#ffffff"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/textMySeriesCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="View your followed series"
+                            android:textColor="#B0B0B0"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <!-- Arrow with Animation Container -->
+                    <FrameLayout
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/arrow_container_background">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_arrow_right"
+                            app:tint="#FF8C42"
+                            android:contentDescription="Arrow Icon" />
+                    </FrameLayout>
+                </LinearLayout>
+
+                <!-- Shimmer Effect Overlay -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/shimmer_overlay"
+                    android:alpha="0.1" />
+            </androidx.cardview.widget.CardView>
+
             <!-- Change Password Section -->
             <TextView
                 android:layout_width="wrap_content"
