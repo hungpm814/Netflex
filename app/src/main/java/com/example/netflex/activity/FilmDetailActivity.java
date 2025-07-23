@@ -20,20 +20,15 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.netflex.APIRequestModels.PostCommentRequest;
 import com.example.netflex.APIServices.ApiClient;
 import com.example.netflex.APIServices.CommentAPIService;
 import com.example.netflex.APIServices.FilmAPIService;
-<<<<<<< Updated upstream:app/src/main/java/com/example/netflex/FilmDetailActivity.java
 import com.example.netflex.adapter.CommentAdapter;
-=======
 import com.example.netflex.R;
->>>>>>> Stashed changes:app/src/main/java/com/example/netflex/activity/FilmDetailActivity.java
 import com.example.netflex.model.Actor;
 import com.example.netflex.model.Comment;
 import com.example.netflex.model.Film;
