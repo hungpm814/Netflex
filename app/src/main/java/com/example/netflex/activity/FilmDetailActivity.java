@@ -1,4 +1,4 @@
-package com.example.netflex;
+package com.example.netflex.activity;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -29,7 +29,11 @@ import com.example.netflex.APIRequestModels.PostCommentRequest;
 import com.example.netflex.APIServices.ApiClient;
 import com.example.netflex.APIServices.CommentAPIService;
 import com.example.netflex.APIServices.FilmAPIService;
+<<<<<<< Updated upstream:app/src/main/java/com/example/netflex/FilmDetailActivity.java
 import com.example.netflex.adapter.CommentAdapter;
+=======
+import com.example.netflex.R;
+>>>>>>> Stashed changes:app/src/main/java/com/example/netflex/activity/FilmDetailActivity.java
 import com.example.netflex.model.Actor;
 import com.example.netflex.model.Comment;
 import com.example.netflex.model.Film;
@@ -37,7 +41,6 @@ import com.example.netflex.model.User;
 import com.example.netflex.responseAPI.CommentListResponse;
 import com.example.netflex.utils.SharedPreferencesManager;
 import com.example.netflex.viewModels.FilmDetailViewModel;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.squareup.picasso.Picasso;
 
 import java.time.LocalDateTime;

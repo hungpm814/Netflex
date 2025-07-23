@@ -1,8 +1,8 @@
 package com.example.netflex.APIServices;
 
 import com.example.netflex.requestAPI.auth.*;
-import com.example.netflex.resonseAPI.MessageResponse;
-import com.example.netflex.resonseAPI.auth.*;
+import com.example.netflex.responseAPI.MessageResponse;
+import com.example.netflex.responseAPI.auth.*;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

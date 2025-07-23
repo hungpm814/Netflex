@@ -1,4 +1,4 @@
-package com.example.netflex;
+package com.example.netflex.activity;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.media3.common.MediaItem;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.ui.PlayerView;
+
+import com.example.netflex.R;
 
 public class WatchFilmActivity extends AppCompatActivity {
     private PlayerView playerView;

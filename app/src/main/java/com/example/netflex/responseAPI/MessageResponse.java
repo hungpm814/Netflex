@@ -1,4 +1,4 @@
-package com.example.netflex.resonseAPI;
+package com.example.netflex.responseAPI;
 
 import lombok.Data;
 

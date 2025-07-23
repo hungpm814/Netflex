@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.netflex.R;
 import com.example.netflex.APIServices.ApiClient;
 import com.example.netflex.requestAPI.auth.ForgotPasswordRequest;
-import com.example.netflex.resonseAPI.auth.ForgotPasswordOtpResponse;
+import com.example.netflex.responseAPI.auth.ForgotPasswordOtpResponse;
 import com.google.android.material.textfield.TextInputEditText;
 
 import retrofit2.Call;
