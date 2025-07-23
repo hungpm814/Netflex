@@ -21,6 +21,8 @@ import com.example.netflex.APIServices.ApiClient;
 import com.example.netflex.APIServices.FilmAPIService;
 import com.example.netflex.model.Actor;
 import com.example.netflex.model.Film;
+import com.example.netflex.utils.SharedPreferencesManager;
+import android.webkit.WebViewClient;
 import com.example.netflex.viewModels.FilmDetailViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.squareup.picasso.Picasso;
@@ -68,12 +70,21 @@ public class FilmDetailActivity extends AppCompatActivity {
 
                         // Update views' content on the layout.
                         prepareViewsData(viewModel);
+
+                        // Save to watch history when viewing film detail
+                        SharedPreferencesManager prefsManager = new SharedPreferencesManager(FilmDetailActivity.this);
+                        prefsManager.addToWatchHistory(film.getId(), film.getTitle(), film.getPoster());
+                    } else {
+                        Toast.makeText(FilmDetailActivity.this, "Failed to load film details", Toast.LENGTH_SHORT)
+                                .show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<FilmDetailViewModel> call, Throwable t) {
-                    Log.e("API_ERROR", "Failed to fetch the film", t);
+                    Log.e("FilmDetail", "API Failure: " + t.getMessage());
+                    Toast.makeText(FilmDetailActivity.this, "Error loading film: " + t.getMessage(), Toast.LENGTH_SHORT)
+                            .show();
                 }
             });
 
@@ -141,67 +152,75 @@ public class FilmDetailActivity extends AppCompatActivity {
         btnPlay = findViewById(R.id.btnPlay);
         webViewTrailer = findViewById(R.id.webViewTrailer);
         btnBack = findViewById(R.id.btnBack);
+        if (webViewTrailer != null) {
+            WebSettings settings = webViewTrailer.getSettings();
+            settings.setJavaScriptEnabled(true);
+            settings.setDomStorageEnabled(true);
 
-        WebSettings settings = webViewTrailer.getSettings();
-        settings.setJavaScriptEnabled(true);
-        settings.setDomStorageEnabled(true);
+            btnBack.setOnClickListener(v -> finish());
 
-        btnBack.setOnClickListener(v -> finish());
+            webViewTrailer.setWebChromeClient(new WebChromeClient() {
+                @Override
+                public void onShowCustomView(View view, CustomViewCallback callback) {
+                    if (customView != null) {
+                        callback.onCustomViewHidden();
+                        return;
+                    }
 
-        webViewTrailer.setWebChromeClient(new WebChromeClient() {
-            @Override
-            public void onShowCustomView(View view, CustomViewCallback callback) {
-                if (customView != null) {
-                    callback.onCustomViewHidden();
-                    return;
+                    customView = view;
+                    customViewCallback = callback;
+
+                    // Hide trailer webView.
+                    webViewTrailer.setVisibility(View.GONE);
+
+                    // Open full screen mode.
+                    FrameLayout decorView = (FrameLayout) getWindow().getDecorView();
+                    decorView.addView(customView, new FrameLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT));
+
+                    // Hide system navigation buttons.
+                    getWindow().getDecorView().setSystemUiVisibility(
+                            View.SYSTEM_UI_FLAG_FULLSCREEN |
+                                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
                 }
 
-                customView = view;
-                customViewCallback = callback;
+                @Override
+                public void onHideCustomView() {
+                    if (customView == null)
+                        return;
 
-                // Hide trailer webView.
-                webViewTrailer.setVisibility(View.GONE);
+                    // Remove full screen mode.
+                    FrameLayout decorView = (FrameLayout) getWindow().getDecorView();
+                    decorView.removeView(customView);
+                    customView = null;
+                    webViewTrailer.setVisibility(View.VISIBLE);
 
-                // Open full screen mode.
-                FrameLayout decorView = (FrameLayout) getWindow().getDecorView();
-                decorView.addView(customView, new FrameLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
-                ));
+                    // Show system navigation buttons.
+                    getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
 
-                // Hide system navigation buttons.
-                getWindow().getDecorView().setSystemUiVisibility(
-                        View.SYSTEM_UI_FLAG_FULLSCREEN |
-                                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                );
-            }
-
-            @Override
-            public void onHideCustomView() {
-                if (customView == null) return;
-
-                // Remove full screen mode.
-                FrameLayout decorView = (FrameLayout) getWindow().getDecorView();
-                decorView.removeView(customView);
-                customView = null;
-                webViewTrailer.setVisibility(View.VISIBLE);
-
-                // Show system navigation buttons.
-                getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-
-                customViewCallback.onCustomViewHidden();
-            }
-        });
+                    customViewCallback.onCustomViewHidden();
+                }
+            });
+            webViewTrailer.setWebViewClient(new WebViewClient()); // Add this for error handling
+        } else {
+            Log.e("FilmDetail", "WebView not found in layout");
+        }
     }
 
     private void playFilm(Film film) {
+        // Save to watch history before playing
+        SharedPreferencesManager prefsManager = new SharedPreferencesManager(this);
+        prefsManager.addToWatchHistory(film.getId(), film.getTitle(), film.getPoster());
+
         Intent intent = new Intent(FilmDetailActivity.this, WatchFilmActivity.class);
         intent.putExtra("video_url", film.getPath());
         startActivity(intent);
     }
 
     private void toggleTrailerView(Film film) {
+        if (webViewTrailer == null) return;
         isTrailerViewOpened = !isTrailerViewOpened;
         Log.d("trailer", "isTrailerViewOpened: " + isTrailerViewOpened);
 

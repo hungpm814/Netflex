@@ -2,6 +2,8 @@ package com.example.netflex.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SharedPreferencesManager {
     private static final String PREF_NAME = "NetflexPrefs";
@@ -15,6 +17,9 @@ public class SharedPreferencesManager {
     private static final String KEY_REMEMBER_ME = "remember_me";
     private static final String KEY_SAVED_EMAIL = "saved_email";
     private static final String KEY_SAVED_PASSWORD = "saved_password";
+
+    // Watch History keys
+    private static final String KEY_WATCH_HISTORY = "watch_history";
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
@@ -81,6 +86,54 @@ public class SharedPreferencesManager {
     // Xoá tất cả dữ liệu
     public void clearUserData() {
         editor.clear();
+        editor.apply();
+    }
+
+    // Watch History methods
+    public void addToWatchHistory(String filmId, String title, String poster) {
+        String currentHistory = sharedPreferences.getString(KEY_WATCH_HISTORY, "");
+        String newEntry = filmId + "|" + title + "|" + poster + "|" + System.currentTimeMillis();
+
+        if (currentHistory.isEmpty()) {
+            currentHistory = newEntry;
+        } else {
+            // Remove if already exists (to avoid duplicates and move to top)
+            String[] entries = currentHistory.split(";;;");
+            StringBuilder updatedHistory = new StringBuilder(newEntry);
+
+            int count = 0;
+            for (String entry : entries) {
+                if (!entry.startsWith(filmId + "|") && count < 19) { // Keep max 20 items
+                    updatedHistory.append(";;;").append(entry);
+                    count++;
+                }
+            }
+            currentHistory = updatedHistory.toString();
+        }
+
+        editor.putString(KEY_WATCH_HISTORY, currentHistory);
+        editor.apply();
+    }
+
+    public List<String[]> getWatchHistory() {
+        String history = sharedPreferences.getString(KEY_WATCH_HISTORY, "");
+        List<String[]> historyList = new ArrayList<>();
+
+        if (!history.isEmpty()) {
+            String[] entries = history.split(";;;");
+            for (String entry : entries) {
+                String[] parts = entry.split("\\|");
+                if (parts.length >= 4) {
+                    historyList.add(parts); // [filmId, title, poster, timestamp]
+                }
+            }
+        }
+
+        return historyList;
+    }
+
+    public void clearWatchHistory() {
+        editor.remove(KEY_WATCH_HISTORY);
         editor.apply();
     }
 }

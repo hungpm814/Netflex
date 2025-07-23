@@ -17,6 +17,7 @@ import com.example.netflex.model.Episode;
 import com.example.netflex.model.Genre;
 import com.example.netflex.model.Serie;
 import com.example.netflex.responseAPI.SerieDetailResponse;
+import com.example.netflex.utils.SharedPreferencesManager;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -78,6 +79,10 @@ public class SerieDetailActivity extends AppCompatActivity {
 
                     // Bind data to UI
                     title.setText(serie.getTitle());
+                    
+                    // Save to watch history when viewing serie detail
+                    SharedPreferencesManager prefsManager = new SharedPreferencesManager(SerieDetailActivity.this);
+                    prefsManager.addToWatchHistory(serie.getId(), serie.getTitle(), serie.getPoster());
                     textAbout.setText(serie.getAbout());
                     textYear.setText("Year of release: " + serie.getProductionYear());
 

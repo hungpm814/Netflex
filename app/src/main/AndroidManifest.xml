@@ -64,6 +64,9 @@
         <activity android:name=".activity.SettingsActivity"
             android:exported="true"
             />
+        <activity android:name=".activity.WatchHistoryActivity"
+            android:exported="true"
+            />
     </application>
 
 </manifest>

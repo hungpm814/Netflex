@@ -27,6 +27,7 @@ import com.example.netflex.APIServices.GenreAPIService;
 import com.example.netflex.APIServices.SerieAPIService;
 import com.example.netflex.activity.LoginActivity;
 import com.example.netflex.activity.SettingsActivity;
+import com.example.netflex.activity.WatchHistoryActivity;
 import com.example.netflex.adapter.FilmAdapter;
 import com.example.netflex.adapter.SerieAdapter;
 import com.example.netflex.model.Country;
@@ -431,7 +432,8 @@ public class HomeActivity extends AppCompatActivity {
                 // TODO: Mở New & Hot
                 return true;
             } else if (itemId == R.id.menu_History) {
-                // TODO: Mở History
+                Intent intent = new Intent(HomeActivity.this, WatchHistoryActivity.class);
+                startActivity(intent);
                 return true;
             } else if (itemId == R.id.menu_settings) {
                 Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
