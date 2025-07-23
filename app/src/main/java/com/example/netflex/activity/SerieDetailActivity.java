@@ -130,6 +130,9 @@ public class SerieDetailActivity extends AppCompatActivity {
 
         serieId = getIntent().getStringExtra("serie_id");
         if (serieId == null) {
+            serieId = getIntent().getStringExtra("id");
+        }
+        if (serieId == null) {
             Toast.makeText(this, "Serie ID is missing", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -144,6 +147,7 @@ public class SerieDetailActivity extends AppCompatActivity {
             public void onResponse(Call<SerieDetailResponse> call, Response<SerieDetailResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Serie serie = response.body().getSerie();
+                    prefsManager.addToWatchHistory(serie.getId(), serie.getTitle(), serie.getPoster(), "serie");
                     List<Episode> episodes = response.body().getEpisodes();
 
                     if (serie == null) {

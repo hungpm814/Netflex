@@ -57,25 +57,6 @@ public class WatchHistoryActivity extends AppCompatActivity {
     }
 
     /**
-     * Initialize views and set up click listeners
-     */
-//    private void initViews() {
-//        recyclerViewHistory = findViewById(R.id.recyclerViewHistory);
-//        emptyStateLayout = findViewById(R.id.emptyStateLayout);
-//        textClearHistory = findViewById(R.id.textClearHistory);
-//        bottomNavigationView = findViewById(R.id.bottomNavigation);
-//
-//        // Set up clear history button
-//        textClearHistory.setOnClickListener(v -> {
-//            prefsManager.clearWatchHistory();
-//            loadWatchHistory(); // Refresh the list immediately
-//        });
-//
-//        // Set up RecyclerView with LinearLayoutManager
-//        recyclerViewHistory.setLayoutManager(new LinearLayoutManager(this));
-//    }
-
-    /**
      * Load watch history from SharedPreferences and update UI accordingly
      */
     private void loadWatchHistory() {

@@ -95,9 +95,10 @@ public class SharedPreferencesManager {
         editor.apply();
     }
 
-    public void addToWatchHistory(String filmId, String title, String poster) {
+
+    public void addToWatchHistory(String id, String title, String poster, String type) {  // Thêm param type
         String currentHistory = sharedPreferences.getString(KEY_WATCH_HISTORY, "");
-        String newEntry = filmId + "|" + title + "|" + poster + "|" + System.currentTimeMillis();
+        String newEntry = id + "|" + title + "|" + poster + "|" + System.currentTimeMillis() + "|" + type;  // Thêm type
 
         if (currentHistory.isEmpty()) {
             currentHistory = newEntry;
@@ -108,7 +109,7 @@ public class SharedPreferencesManager {
 
             int count = 0;
             for (String entry : entries) {
-                if (!entry.startsWith(filmId + "|") && count < 19) { // Keep max 20 items
+                if (!entry.startsWith(id + "|") && count < 19) { // Keep max 20 items
                     updatedHistory.append(";;;").append(entry);
                     count++;
                 }
@@ -128,8 +129,8 @@ public class SharedPreferencesManager {
             String[] entries = history.split(";;;");
             for (String entry : entries) {
                 String[] parts = entry.split("\\|");
-                if (parts.length >= 4) {
-                    historyList.add(parts); // [filmId, title, poster, timestamp]
+                if (parts.length >= 5) {
+                    historyList.add(parts);
                 }
             }
         }

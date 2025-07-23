@@ -73,6 +73,9 @@ public class FilmDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_film_detail);
 
         filmId = getIntent().getStringExtra("film_id");
+        if (filmId == null) {
+            filmId = getIntent().getStringExtra("id");
+        }
 
         initApis();
         initServices();
@@ -101,7 +104,7 @@ public class FilmDetailActivity extends AppCompatActivity {
 
                         // Save to watch history when viewing film detail
                         SharedPreferencesManager prefsManager = new SharedPreferencesManager(FilmDetailActivity.this);
-                        prefsManager.addToWatchHistory(film.getId(), film.getTitle(), film.getPoster());
+                        prefsManager.addToWatchHistory(film.getId(), film.getTitle(), film.getPoster(), "film");
                     } else {
                         Toast.makeText(FilmDetailActivity.this, "Failed to load film details", Toast.LENGTH_SHORT)
                                 .show();
@@ -355,7 +358,7 @@ public class FilmDetailActivity extends AppCompatActivity {
 
     private void playFilm(Film film) {
         SharedPreferencesManager prefsManager = new SharedPreferencesManager(this);
-        prefsManager.addToWatchHistory(film.getId(), film.getTitle(), film.getPoster());
+        prefsManager.addToWatchHistory(film.getId(), film.getTitle(), film.getPoster(), "film");
         Intent intent = new Intent(FilmDetailActivity.this, WatchFilmActivity.class);
         intent.putExtra("video_url", film.getPath());
         startActivity(intent);
