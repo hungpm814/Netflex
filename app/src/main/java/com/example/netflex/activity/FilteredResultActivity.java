@@ -102,6 +102,8 @@ public class FilteredResultActivity extends AppCompatActivity {
         } else if ("serie".equals(type)) {
             fetchFilteredSeries(genreId, countryId, selectedYear, keyword);
             isFilmSelected = false;
+        } else {
+            searchWithFallbackPreferFilm(keyword);
         }
 
         // Code cho phần Lọc
@@ -122,7 +124,12 @@ public class FilteredResultActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                fetchFilteredFilms(null,null,null,query);
+                if(isFilmSelected){
+                    searchWithFallbackPreferFilm(query);
+                } else {
+                    searchWithFallbackPreferSerie(query);
+                }
+
                 searchView.clearFocus();
                 return true;
             }
@@ -149,9 +156,6 @@ public class FilteredResultActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     List<Film> films = response.body().items;
                     Log.d("FILM_API", "Filtered films count: " + films.size());
-
-                    // Gán dữ liệu vào RecyclerView
-                    //setupFilmRecyclerView(recyclerResults, films);
 
                     if (films.isEmpty()) {
                         txtNoResult.setVisibility(View.VISIBLE);
@@ -562,6 +566,65 @@ public class FilteredResultActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void searchWithFallbackPreferFilm(String query) {
+        FilmAPIService filmService = ApiClient.getRetrofit().create(FilmAPIService.class);
+        int page = 1;
+
+        Call<FilmResponse> call = filmService.getFilms(page, null, null, null, query);
+        call.enqueue(new Callback<FilmResponse>() {
+            @Override
+            public void onResponse(Call<FilmResponse> call, Response<FilmResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Film> films = response.body().items;
+                    if (films != null && !films.isEmpty()) {
+                        txtNoResult.setVisibility(View.GONE);
+                        recyclerResults.setVisibility(View.VISIBLE);
+                        setupFilmRecyclerView(recyclerResults, films);
+                    } else {
+                        Log.e("Vao SERIE", "Film response failed: " + response.code());
+                        fetchFilteredSeries(null, null, null, query);
+                    }
+                } else {
+                    Log.e("SEARCH_FALLBACK", "Film response failed: " + response.code());
+                    fetchFilteredSeries(null, null, null, query);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FilmResponse> call, Throwable t) {
+                Log.e("SEARCH_FALLBACK", "Film API failed", t);
+                fetchFilteredSeries(null, null, null, query);
+            }
+        });
+    }
+
+    private void searchWithFallbackPreferSerie(String query) {
+        SerieAPIService serieService = ApiClient.getRetrofit().create(SerieAPIService.class);
+        int page = 1;
+
+        Call<SerieResponse> serieCall = serieService.getSeriesFilter(page, null, null, null, query);
+        serieCall.enqueue(new Callback<SerieResponse>() {
+            @Override
+            public void onResponse(Call<SerieResponse> call, Response<SerieResponse> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().items != null && !response.body().items.isEmpty()) {
+                    List<Serie> series = response.body().items;
+                    txtNoResult.setVisibility(View.GONE);
+                    recyclerResults.setVisibility(View.VISIBLE);
+                    setupSerieRecyclerView(recyclerResults, series);
+                } else {
+                    fetchFilteredFilms(null, null, null, query);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SerieResponse> call, Throwable t) {
+                Log.e("SEARCH_FALLBACK", "Serie API failed", t);
+                fetchFilteredFilms(null, null, null, query);
+            }
+        });
+    }
+
 
 
     // Điều hướng thanh bottom
