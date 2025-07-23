@@ -6,6 +6,7 @@ import static android.view.View.VISIBLE;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -306,6 +307,12 @@ public class FilmDetailActivity extends AppCompatActivity {
         layoutRateContent = findViewById(R.id.layoutRateContent);
         layoutRating = findViewById(R.id.layoutRating);
         ratingBarFilm = findViewById(R.id.ratingBarFilm);
+        SharedPreferences prefs = getSharedPreferences("RATING_PREF", MODE_PRIVATE);
+        float savedRating = prefs.getFloat("rating_film_" + filmId, 0f);
+        if (savedRating > 0f) {
+            ratingBarFilm.setRating(savedRating);
+        }
+
         layoutRating.setOnClickListener(v -> {
             boolean isVisible = ratingBarFilm.getVisibility() == View.VISIBLE;
             ratingBarFilm.setVisibility(isVisible ? View.GONE : View.VISIBLE);
@@ -332,10 +339,16 @@ public class FilmDetailActivity extends AppCompatActivity {
                     if (!sharedPreferencesManager.isLoggedIn()) {
                         startActivity(new Intent(FilmDetailActivity.this, LoginActivity.class));
                     } else {
+                        // Lưu ngay vào SharedPreferences khi người dùng chọn
+                        SharedPreferences.Editor editor = getSharedPreferences("RATING_PREF", MODE_PRIVATE).edit();
+                        editor.putFloat("rating_film_" + filmId, rating);
+                        editor.apply();
+
                         submitfilmRating(filmId, (int) rating);
                     }
                 }
             });
+
         } else {
             Log.e("FilmDetailActivity", "ratingBarLike is null");
         }
