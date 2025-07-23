@@ -45,6 +45,7 @@ import com.google.android.material.chip.ChipGroup;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -86,6 +87,7 @@ public class HomeActivity extends AppCompatActivity {
 
         //Fetch danh sách Film
         fetchFilteredFilms(null, null, null, null);
+        fetchLatestFilms();
 
         // Code cho phần Lọc
         findViewById(R.id.btnFilter).setOnClickListener(v -> showFilterDialog());
@@ -158,9 +160,7 @@ public class HomeActivity extends AppCompatActivity {
                     List<Film> films = response.body().items;
                     Log.d("FILM_API", "Filtered films count: " + films.size());
 
-                    // Gán dữ liệu vào cả 2 RecyclerView
                     setupFilmRecyclerView(recyclerTrending, films);
-                    setupFilmRecyclerView(recyclerReleases, films);
                 } else {
                     Log.e("FILM_API", "Response code: " + response.code());
 
@@ -179,7 +179,30 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
+    private void fetchLatestFilms() {
+        FilmAPIService apiService = ApiClient.getRetrofit().create(FilmAPIService.class);
+        int page = 1;
 
+        Call<FilmResponse> call = apiService.getLatestFilms(page);
+        call.enqueue(new Callback<FilmResponse>() {
+            @Override
+            public void onResponse(Call<FilmResponse> call, Response<FilmResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Film> latestFilms = response.body().items;
+
+                    setupFilmRecyclerView(recyclerReleases, latestFilms);
+                    Log.d("FILM_API", "Latest films count: " + latestFilms.size());
+                } else {
+                    Log.e("FILM_API", "Response code: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FilmResponse> call, Throwable t) {
+                Log.e("FILM_API", "Latest API failed", t);
+            }
+        });
+    }
 
     // Hiển thị danh sách Film
     private void setupFilmRecyclerView(RecyclerView recyclerView, List<Film> films) {
@@ -208,20 +231,24 @@ public class HomeActivity extends AppCompatActivity {
             Button btnFilm = view.findViewById(R.id.btnFilm);
             Button btnSeries = view.findViewById(R.id.btnSeries);
 
+            AtomicReference<Boolean> isFilmSelected = new AtomicReference<>(true);
+
             // Màu mặc định và màu khi chọn
-            int selectedColor = Color.parseColor("#3399FF"); // xanh nước biển nhạt
+            int selectedColor = Color.parseColor("#3399FF");
             int defaultColor = Color.parseColor("#444444");
+
+            btnFilm.setBackgroundTintList(ColorStateList.valueOf(selectedColor));
 
             btnFilm.setOnClickListener(v -> {
                 btnFilm.setBackgroundTintList(ColorStateList.valueOf(selectedColor));
                 btnSeries.setBackgroundTintList(ColorStateList.valueOf(defaultColor));
-                // TODO: Đánh dấu đang chọn lọc phim
+                isFilmSelected.set(true);
             });
 
             btnSeries.setOnClickListener(v -> {
                 btnFilm.setBackgroundTintList(ColorStateList.valueOf(defaultColor));
                 btnSeries.setBackgroundTintList(ColorStateList.valueOf(selectedColor));
-                // TODO: Đánh dấu đang chọn lọc series
+                isFilmSelected.set(false);
             });
 
             // Tạo danh sách năm
@@ -366,6 +393,11 @@ public class HomeActivity extends AppCompatActivity {
 
                 // Tạo Intent để mở trang mới
                 Intent intent = new Intent(HomeActivity.this, FilteredResultActivity.class);
+                if (isFilmSelected.get()) {
+                    intent.putExtra("type", "film");
+                } else {
+                    intent.putExtra("type", "serie");
+                }
                 intent.putExtra("genreId", selectedGenre != null ? selectedGenre.id.toString() : null);
                 intent.putExtra("countryId", selectedCountry != null ? selectedCountry.id != null ? selectedCountry.id.toString() : null : null);
                 intent.putExtra("year", selectedYear != null ? selectedYear : -1);
