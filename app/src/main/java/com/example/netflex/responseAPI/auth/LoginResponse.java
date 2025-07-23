@@ -1,4 +1,4 @@
-package com.example.netflex.resonseAPI.auth;
+package com.example.netflex.responseAPI.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

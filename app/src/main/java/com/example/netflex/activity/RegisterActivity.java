@@ -2,14 +2,13 @@ package com.example.netflex.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.netflex.APIServices.ApiClient;
 import com.example.netflex.APIServices.AuthApiService;
 import com.example.netflex.R;
 import com.example.netflex.requestAPI.auth.RegisterRequest;
-import com.example.netflex.resonseAPI.MessageResponse;
+import com.example.netflex.responseAPI.MessageResponse;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

@@ -1,4 +1,4 @@
-package com.example.netflex;
+package com.example.netflex.activity;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -20,16 +20,15 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.netflex.APIRequestModels.PostCommentRequest;
 import com.example.netflex.APIServices.ApiClient;
 import com.example.netflex.APIServices.CommentAPIService;
 import com.example.netflex.APIServices.FilmAPIService;
 import com.example.netflex.adapter.CommentAdapter;
+import com.example.netflex.R;
 import com.example.netflex.model.Actor;
 import com.example.netflex.model.Comment;
 import com.example.netflex.model.Film;
@@ -37,7 +36,6 @@ import com.example.netflex.model.User;
 import com.example.netflex.responseAPI.CommentListResponse;
 import com.example.netflex.utils.SharedPreferencesManager;
 import com.example.netflex.viewModels.FilmDetailViewModel;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.squareup.picasso.Picasso;
 
 import java.time.LocalDateTime;

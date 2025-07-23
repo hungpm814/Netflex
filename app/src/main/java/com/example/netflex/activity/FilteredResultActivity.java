@@ -1,4 +1,4 @@
-package com.example.netflex;
+package com.example.netflex.activity;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -8,8 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import androidx.appcompat.widget.SearchView;
@@ -18,8 +16,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,19 +26,13 @@ import com.example.netflex.APIServices.ApiClient;
 import com.example.netflex.APIServices.CountryAPIService;
 import com.example.netflex.APIServices.FilmAPIService;
 import com.example.netflex.APIServices.GenreAPIService;
-import com.example.netflex.APIServices.SerieAPIService;
-import com.example.netflex.activity.LoginActivity;
-import com.example.netflex.activity.SettingsActivity;
+import com.example.netflex.R;
 import com.example.netflex.adapter.FilmAdapter;
-import com.example.netflex.adapter.SerieAdapter;
 import com.example.netflex.model.Country;
 import com.example.netflex.model.Film;
 import com.example.netflex.model.Genre;
-import com.example.netflex.model.Serie;
 import com.example.netflex.responseAPI.FilmResponse;
-import com.example.netflex.resonseAPI.GenreResponse;
-import com.example.netflex.responseAPI.SerieResponse;
-import com.example.netflex.utils.SharedPreferencesManager;
+import com.example.netflex.responseAPI.GenreResponse;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -47,77 +40,54 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class HomeActivity extends AppCompatActivity {
+public class FilteredResultActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerTrending;
-    private RecyclerView recyclerReleases;
-    private List<Country> countries = new ArrayList<>();
+    private RecyclerView recyclerResults;
+    private TextView txtNoResult;
     private List<Genre> genres = new ArrayList<>();
-    private String keyword;
-
-
+    private List<Country> countries = new ArrayList<>();
     private BottomNavigationView bottomNavigationView;
+    private UUID genreId;
+    private UUID countryId;
+    private Integer selectedYear;
+    private String keyword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-        SharedPreferencesManager sharedPrefs = new SharedPreferencesManager(this);
-        if (!sharedPrefs.isLoggedIn()) {
-            // Nếu chưa đăng nhập thì chuyển sang LoginActivity
-            Intent intent = new Intent(this, LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // clear stack
-            startActivity(intent);
-            return; // không chạy tiếp
-        }
-        setContentView(R.layout.activity_home);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_filtered_result);
 
         bottomNavigationView = findViewById(R.id.bottomNavigation);
         setupBottomNavigation();
 
-        RecyclerView recyclerOnlyOn = findViewById(R.id.recyclerOnlyOn);
-        RecyclerView recyclerPopular = findViewById(R.id.recyclerPopular);
-        recyclerTrending = findViewById(R.id.recyclerTrending);
-        recyclerReleases = findViewById(R.id.recyclerReleases);
+        recyclerResults = findViewById(R.id.recyclerFiltered);
+        recyclerResults.setLayoutManager(new GridLayoutManager(this, 3));
 
-        //Fetch danh sách Film
-        fetchFilteredFilms(null, null, null, null);
+        txtNoResult = findViewById(R.id.txtNoResult);
+
+        // Nhận dữ liệu từ Intent
+        String genreIdStr = getIntent().getStringExtra("genreId");
+        String countryIdStr = getIntent().getStringExtra("countryId");
+        int year = getIntent().getIntExtra("year", -1);
+
+        genreId = genreIdStr != null ? UUID.fromString(genreIdStr) : null;
+        countryId = countryIdStr != null ? UUID.fromString(countryIdStr) : null;
+        selectedYear = (year != -1) ? year : null;
+        keyword = getIntent().getStringExtra("keyword");
+
+        // Gọi API lấy dữ liệu lọc
+        fetchFilteredFilms(genreId, countryId, selectedYear, keyword);
 
         // Code cho phần Lọc
         findViewById(R.id.btnFilter).setOnClickListener(v -> showFilterDialog());
-
-        // Gọi API lấy danh sách Serie
-        SerieAPIService serieAPIService = ApiClient.getRetrofit().create(SerieAPIService.class);
-        serieAPIService.getSeries(1).enqueue(new Callback<SerieResponse>() {
-            @Override
-            public void onResponse(Call<SerieResponse> call, Response<SerieResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<Serie> series = response.body().items;
-                    Log.d("SERIE_API", "Series count: " + series.size());
-
-                    setupSerieRecyclerView(recyclerPopular, series);
-                    setupSerieRecyclerView(recyclerOnlyOn, series);
-                } else {
-                    Log.e("SERIE_API", "Response failed or body is null");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<SerieResponse> call, Throwable t) {
-                Log.e("API_ERROR", "Failed to fetch series", t);
-            }
-        });
 
         SearchView searchView = findViewById(R.id.searchView);
 
@@ -126,17 +96,15 @@ public class HomeActivity extends AppCompatActivity {
             searchEditText.setTextColor(Color.WHITE);
             searchEditText.setHintTextColor(Color.GRAY);
         }
+        if (keyword != null && !keyword.isEmpty()) {
+            searchView.setQuery(keyword, false);
+        }
+        searchView.clearFocus();
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Intent intent = new Intent(HomeActivity.this, FilteredResultActivity.class);
-                intent.putExtra("keyword", query);
-                intent.putExtra("genreId", (String) null);
-                intent.putExtra("countryId", (String) null);
-                intent.putExtra("year", -1);
-                startActivity(intent);
-
+                fetchFilteredFilms(null,null,null,query);
                 searchView.clearFocus();
                 return true;
             }
@@ -147,7 +115,6 @@ public class HomeActivity extends AppCompatActivity {
                 return false;
             }
         });
-
     }
 
     // Fetch Filter Film
@@ -165,9 +132,17 @@ public class HomeActivity extends AppCompatActivity {
                     List<Film> films = response.body().items;
                     Log.d("FILM_API", "Filtered films count: " + films.size());
 
-                    // Gán dữ liệu vào cả 2 RecyclerView
-                    setupFilmRecyclerView(recyclerTrending, films);
-                    setupFilmRecyclerView(recyclerReleases, films);
+                    // Gán dữ liệu vào RecyclerView
+                    //setupFilmRecyclerView(recyclerResults, films);
+
+                    if (films.isEmpty()) {
+                        txtNoResult.setVisibility(View.VISIBLE);
+                        recyclerResults.setVisibility(View.GONE);
+                    } else {
+                        txtNoResult.setVisibility(View.GONE);
+                        recyclerResults.setVisibility(View.VISIBLE);
+                        setupFilmRecyclerView(recyclerResults, films);
+                    }
                 } else {
                     Log.e("FILM_API", "Response code: " + response.code());
 
@@ -181,29 +156,17 @@ public class HomeActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<FilmResponse> call, Throwable t) {
-                Log.e("FILM_API", "Film API failed", t);
+                Log.e("FILM_API", "Filter API failed", t);
             }
         });
     }
 
-
-
-    // Hiển thị danh sách Film
     private void setupFilmRecyclerView(RecyclerView recyclerView, List<Film> films) {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false);
+        LinearLayoutManager layoutManager = new GridLayoutManager(this, 3);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(new FilmAdapter(films));
     }
 
-
-    // Hiển thị danh sách Serie
-    private void setupSerieRecyclerView(RecyclerView recyclerView, List<Serie> series) {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(new SerieAdapter(this, series));
-    }
-
-    // Lọc Film
     private void showFilterDialog() {
         fetchGenresAndCountries(() -> {
             View view = LayoutInflater.from(this).inflate(R.layout.dialog_filter, null);
@@ -216,7 +179,7 @@ public class HomeActivity extends AppCompatActivity {
             Button btnSeries = view.findViewById(R.id.btnSeries);
 
             // Màu mặc định và màu khi chọn
-            int selectedColor = Color.parseColor("#3399FF"); // xanh nước biển nhạt
+            int selectedColor = Color.parseColor("#3399FF");
             int defaultColor = Color.parseColor("#444444");
 
             btnFilm.setOnClickListener(v -> {
@@ -371,14 +334,13 @@ public class HomeActivity extends AppCompatActivity {
                             .findFirst().orElse(null);
                 }
 
-                // Tạo Intent để mở trang mới
-                Intent intent = new Intent(HomeActivity.this, FilteredResultActivity.class);
-                intent.putExtra("genreId", selectedGenre != null ? selectedGenre.id.toString() : null);
-                intent.putExtra("countryId", selectedCountry != null ? selectedCountry.id != null ? selectedCountry.id.toString() : null : null);
-                intent.putExtra("year", selectedYear != null ? selectedYear : -1);
-                intent.putExtra("keyword", keyword);
-
-                startActivity(intent);
+                fetchFilteredFilms(
+                        selectedGenre != null ? selectedGenre.id : null,
+                        selectedCountry != null ? selectedCountry.id : null,
+                        selectedYear != -1 ? selectedYear : null,
+                        keyword
+                );
+                bottomSheetDialog.dismiss();
             });
 
 
@@ -390,7 +352,6 @@ public class HomeActivity extends AppCompatActivity {
             });
         });
     }
-
 
     private void fetchGenresAndCountries(Runnable onComplete) {
         GenreAPIService genreAPI = ApiClient.getRetrofit().create(GenreAPIService.class);
@@ -455,11 +416,12 @@ public class HomeActivity extends AppCompatActivity {
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.menu_home) {
-                return true;
-            } else if (itemId == R.id.menu_explore) {
-                Intent intent = new Intent(HomeActivity.this, FilteredResultActivity.class);
+                Intent intent = new Intent(FilteredResultActivity.this, HomeActivity.class);
+                //bottomNavigationView.setSelectedItemId(R.id.menu_home);
                 startActivity(intent);
                 finish();
+                return true;
+            } else if (itemId == R.id.menu_explore) {
                 return true;
             } else if (itemId == R.id.menu_new) {
                 // TODO: Mở New & Hot
@@ -468,18 +430,14 @@ public class HomeActivity extends AppCompatActivity {
                 // TODO: Mở History
                 return true;
             } else if (itemId == R.id.menu_settings) {
-                Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
+                Intent intent = new Intent(FilteredResultActivity.this, SettingsActivity.class);
                 startActivity(intent);
                 return true;
             }
-//        } else if (itemId == R.id.menu_profile) {
-//                Intent intent = new Intent(HomeActivity.this, UserProfileActivity.class);
-//                startActivity(intent);
-//                return true;
-//            }
             return false;
         });
 
-        bottomNavigationView.setSelectedItemId(R.id.menu_home);
+        bottomNavigationView.setSelectedItemId(R.id.menu_explore);
+
     }
 }

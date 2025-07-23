@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.netflex.R;
-import com.example.netflex.SerieDetailActivity;
+import com.example.netflex.activity.SerieDetailActivity;
 import com.example.netflex.model.Serie;
 import com.squareup.picasso.Picasso;
 

@@ -6,12 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.netflex.FilmDetailActivity;
+import com.example.netflex.activity.FilmDetailActivity;
 import com.example.netflex.R;
 import com.example.netflex.model.Film;
 import com.squareup.picasso.Picasso;
