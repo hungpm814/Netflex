@@ -16,7 +16,12 @@ public interface ReviewAPIService {
     @GET("api/review/serie/{serieId}/rating")
     Call<ReviewResponse> getSeriePublicRating(@Path("serieId") String serieId);
 
+    @GET("api/review/film/{filmId}/rating")
+    Call<ReviewResponse> getFilmPublicRating(@Path("filmId") String filmId);
     @POST("api/review/serie/{id}")
     Call<ResponseBody> submitSerieRating(@Path("id") String serieId, @Body ReviewEditModel model);
+
+    @POST("api/review/film/{id}")
+    Call<ResponseBody> submitFilmRating(@Path("id") String filmId, @Body ReviewEditModel model);
 
 }

@@ -107,6 +107,17 @@ public class SerieDetailActivity extends AppCompatActivity {
         ratingBar = findViewById(R.id.ratingBar);
         layoutRating = findViewById(R.id.layoutRating);
         ratingBarLike = findViewById(R.id.ratingBarLike);
+        serieId = getIntent().getStringExtra("serie_id");
+        if (serieId == null) {
+            Toast.makeText(this, "Serie ID is missing", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        SharedPreferences prefs = getSharedPreferences("RATING_PREF", MODE_PRIVATE);
+        float savedRating = prefs.getFloat("rating_film_" + serieId, 0f);
+        if (savedRating > 0f) {
+            ratingBarLike.setRating(savedRating);
+        }
         layoutRateContent = findViewById(R.id.layoutRateContent);
         layoutFollowSerie = findViewById(R.id.layoutFollowSerie);
         imgFollowIcon = findViewById(R.id.imgFollowIcon);
@@ -201,18 +212,21 @@ public class SerieDetailActivity extends AppCompatActivity {
                 Log.e(TAG, "API Error", t);
             }
         });
+        if (ratingBarLike != null) {
+            ratingBarLike.setOnRatingBarChangeListener((bar, rating, fromUser) -> {
+                if (fromUser) {
+                    if (!sharedPreferencesManager.isLoggedIn()) {
+                        startActivity(new Intent(SerieDetailActivity.this, LoginActivity.class));
+                    } else {
+                        SharedPreferences.Editor editor = getSharedPreferences("RATING_PREF", MODE_PRIVATE).edit();
+                        editor.putFloat("rating_film_" + serieId, rating);
+                        editor.apply();
 
-        ratingBarLike.setOnRatingBarChangeListener((bar, rating, fromUser) -> {
-            if (fromUser) {
-                if (!prefsManager.isLoggedIn()) {
-                    Intent intent = new Intent(SerieDetailActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                } else {
-                    submitSerieRating(serieId, (int) rating);
+                        submitSerieRating(serieId, (int) rating);
+                    }
                 }
-            }
-        });
-
+            });
+        }
     }
 
     private void initServices(){

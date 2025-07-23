@@ -77,7 +77,7 @@
 
             <!-- Popular on Netflex -->
             <TextView
-                android:text="Popular on Netflex"
+                android:text="Hot Series on Netflex"
                 android:textColor="@android:color/white"
                 android:textSize="18sp"
                 android:layout_marginBottom="8dp"
@@ -96,7 +96,7 @@
 
             <!-- Trending Now -->
             <TextView
-                android:text="Trending Now"
+                android:text="Hot Films on Netflex"
                 android:textColor="@android:color/white"
                 android:textSize="18sp"
                 android:layout_marginBottom="8dp"
@@ -113,6 +113,25 @@
                 android:scrollbars="none"
                 android:layout_marginBottom="16dp"/>
 
+            <!-- New Releases -->
+            <TextView
+                android:text="New Film Releases "
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:layout_marginBottom="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerReleases"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:nestedScrollingEnabled="false"
+                android:orientation="horizontal"
+                android:overScrollMode="never"
+                android:scrollbars="none"
+                android:layout_marginBottom="16dp"/>
+            
             <!-- Section: My List -->
             <TextView
                 android:text="Only on Netflex"
@@ -132,24 +151,6 @@
                 android:scrollbars="none"
                 android:layout_marginBottom="16dp"/>
 
-            <!-- New Releases -->
-            <TextView
-                android:text="New Releases"
-                android:textColor="@android:color/white"
-                android:textSize="18sp"
-                android:layout_marginBottom="8dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerReleases"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:nestedScrollingEnabled="false"
-                android:orientation="horizontal"
-                android:overScrollMode="never"
-                android:scrollbars="none"
-                android:layout_marginBottom="16dp"/>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
