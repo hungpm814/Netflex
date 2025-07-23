@@ -1,7 +1,11 @@
 package com.example.netflex;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -11,12 +15,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.netflex.APIServices.ApiClient;
+import com.example.netflex.APIServices.CommentAPIService;
 import com.example.netflex.APIServices.SerieAPIService;
+import com.example.netflex.adapter.CommentAdapter;
 import com.example.netflex.adapter.EpisodeAdapter;
+import com.example.netflex.model.Comment;
 import com.example.netflex.model.Episode;
 import com.example.netflex.model.Genre;
 import com.example.netflex.model.Serie;
+import com.example.netflex.responseAPI.CommentListResponse;
 import com.example.netflex.responseAPI.SerieDetailResponse;
+import com.example.netflex.utils.SharedPreferencesManager;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -31,9 +40,18 @@ public class SerieDetailActivity extends AppCompatActivity {
     private static final String TAG = "SerieDetailActivity";
 
     private ImageView poster, btnBack;
-    private TextView title, textAbout, textYear, textEpisodes;
+    private TextView title, textAbout, textYear, textEpisodes, textNoComments;
     private TextView textGenres, textCountries, textActors;
     private RecyclerView recyclerEpisodes;
+    private CommentAPIService commentAPIService;
+    private List<Comment> comments = new ArrayList<>();
+    private int pageSize = 5;
+    private int page = 1;
+    private RecyclerView recyclerView;
+    private CommentAdapter commentAdapter;
+    private SharedPreferencesManager sharedPreferencesManager;
+    private Button btnLoadMore;
+    private String sort = "desc";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +69,8 @@ public class SerieDetailActivity extends AppCompatActivity {
         textCountries = findViewById(R.id.textCountries);
         textActors = findViewById(R.id.textActors);
         recyclerEpisodes = findViewById(R.id.recyclerEpisodes);
+        btnLoadMore = findViewById(R.id.btnLoadMore);
+        textNoComments = findViewById(R.id.no_comments);
 
         // Back Button
         btnBack.setOnClickListener(v -> finish());
@@ -61,6 +81,10 @@ public class SerieDetailActivity extends AppCompatActivity {
             Toast.makeText(this, "Serie ID is missing", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        initServices();
+        initApiServices();
+        loadComments(serieId, page, sort);
 
         // Call API to get serie detail
         SerieAPIService apiService = ApiClient.getRetrofit().create(SerieAPIService.class);
@@ -116,6 +140,57 @@ public class SerieDetailActivity extends AppCompatActivity {
     private String listToCommaSeparated(List<String> list) {
         if (list == null || list.isEmpty()) return "No information";
         return android.text.TextUtils.join(", ", list);
+    }
+
+    private void initServices(){
+        sharedPreferencesManager = new SharedPreferencesManager(this);
+    }
+
+    private void initApiServices(){
+        commentAPIService = ApiClient.getRetrofit().create(CommentAPIService.class);
+    }
+
+    private void loadComments(String serieId, int page, String sort) {
+        Call<CommentListResponse> call = commentAPIService.getComments(serieId, page, pageSize, sort);
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(Call<CommentListResponse> call, Response<CommentListResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+
+                    List<Comment> newComments = response.body().comments;
+
+                    if (newComments.isEmpty()) {
+                        textNoComments.setVisibility(VISIBLE);
+                        return;
+                    }
+
+                    comments.addAll(newComments);
+                    setupCommentAdapter(comments);
+
+                    if (response.body().hasMore) {
+                        btnLoadMore.setVisibility(VISIBLE);
+                    } else {
+                        btnLoadMore.setVisibility(GONE);
+                    }
+                } else {
+
+                    Toast.makeText(SerieDetailActivity.this, "Unable to load comments", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CommentListResponse> call, Throwable t) {
+                Log.e("API_ERROR", "Failed to fetch comments", t);
+                Toast.makeText(SerieDetailActivity.this, "Failed to fetch comments" + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void setupCommentAdapter(List<Comment> comments) {
+        recyclerView = findViewById(R.id.recyclerComments);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        commentAdapter = new CommentAdapter(this, comments, sharedPreferencesManager.getUserId());
+        recyclerView.setAdapter(commentAdapter);
     }
     private String actorsToString(List<com.example.netflex.model.Actor> actors) {
         if (actors == null || actors.isEmpty()) return "No information";
