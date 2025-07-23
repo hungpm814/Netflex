@@ -45,16 +45,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <WebView
-                android:id="@+id/webViewTrailer"
-                android:layout_width="350dp"
-                android:layout_height="200dp"
-                android:layout_marginTop="16dp"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/actionButtons" />
-
             <androidx.media3.ui.PlayerView
                 android:id="@+id/playerView"
                 android:layout_width="match_parent"
@@ -250,6 +240,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/btnPlay" />
 
+            <WebView
+                android:id="@+id/webViewTrailer"
+                android:layout_width="350dp"
+                android:layout_height="200dp"
+                android:layout_marginTop="16dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/actionButtons" />
+
             <!-- Comment Section -->
             <LinearLayout
                 android:id="@+id/commentSection"
@@ -260,7 +260,7 @@
                 android:layout_marginBottom="32dp"
                 android:padding="16dp"
                 android:background="#111111"
-                app:layout_constraintTop_toBottomOf="@id/actionButtons"
+                app:layout_constraintTop_toBottomOf="@id/webViewTrailer"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
