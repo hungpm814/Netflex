@@ -142,19 +142,24 @@
             app:layout_constraintEnd_toEndOf="parent">
 
             <LinearLayout
+                android:id="@+id/layoutFollowSerie"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true">
 
                 <ImageView
+                    android:id="@+id/imgFollowIcon"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:background="@drawable/add"
                     android:backgroundTint="@color/white" />
 
                 <TextView
+                    android:id="@+id/textFollowLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/add_my_list"

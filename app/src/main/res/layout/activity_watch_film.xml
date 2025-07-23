@@ -23,4 +23,38 @@
         android:background="@drawable/arrow_left_alt_24px"
         android:contentDescription="Back"
         android:padding="8dp" />
+
+    <!-- Follow Series Button -->
+    <LinearLayout
+        android:id="@+id/layoutFollowSeries"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/bg_circle_button"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:gravity="center_vertical"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/imageFollowSeries"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/add"
+            app:tint="@color/white" />
+
+        <TextView
+            android:id="@+id/textFollowSeries"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="Follow"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
+    </LinearLayout>
 </FrameLayout>

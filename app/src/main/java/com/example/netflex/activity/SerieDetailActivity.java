@@ -36,6 +36,7 @@ import com.example.netflex.model.Genre;
 import com.example.netflex.model.Serie;
 import com.example.netflex.requestAPI.auth.RatingRequest;
 import com.example.netflex.responseAPI.CommentListResponse;
+import com.example.netflex.utils.MyListManager;
 import com.example.netflex.utils.SharedPreferencesManager;
 import com.example.netflex.viewModels.ReviewEditModel;
 import com.example.netflex.responseAPI.ReviewResponse;
@@ -63,10 +64,15 @@ public class SerieDetailActivity extends AppCompatActivity {
     private RatingBar ratingBar;
 
     private LinearLayout layoutRating, layoutRateContent;
+    private LinearLayout layoutFollowSerie;
+    private ImageView imgFollowIcon;
+    private TextView textFollowLabel;
     private RatingBar ratingBarLike;
     private String serieId;
+    private Serie currentSerie;
 
     private SharedPreferencesManager prefsManager;
+    private MyListManager myListManager;
     private CommentAPIService commentAPIService;
     private List<Comment> comments = new ArrayList<>();
     private int pageSize = 5;
@@ -83,6 +89,7 @@ public class SerieDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_serie);
         prefsManager = new SharedPreferencesManager(this);
+        myListManager = new MyListManager(this);
         Log.d("DEBUG", "UserId: " + prefsManager.getUserId());
         Log.d("DEBUG", "isLoggedIn: " + prefsManager.isLoggedIn());
         // Init Views
@@ -112,6 +119,9 @@ public class SerieDetailActivity extends AppCompatActivity {
             ratingBarLike.setRating(savedRating);
         }
         layoutRateContent = findViewById(R.id.layoutRateContent);
+        layoutFollowSerie = findViewById(R.id.layoutFollowSerie);
+        imgFollowIcon = findViewById(R.id.imgFollowIcon);
+        textFollowLabel = findViewById(R.id.textFollowLabel);
         NestedScrollView nestedScrollView = findViewById(R.id.nestedScrollView);
         layoutRating.setOnClickListener(v -> {
             boolean isVisible = ratingBarLike.getVisibility() == VISIBLE;
@@ -125,6 +135,13 @@ public class SerieDetailActivity extends AppCompatActivity {
 
         btnSendComment.setOnClickListener(v -> {
             postComment();
+        });
+
+        // Setup follow button click listener
+        layoutFollowSerie.setOnClickListener(v -> {
+            if (currentSerie != null) {
+                toggleSerieFollow();
+            }
         });
 
         nestedScrollView.setOnTouchListener((v, event) -> {
@@ -155,6 +172,7 @@ public class SerieDetailActivity extends AppCompatActivity {
             public void onResponse(Call<SerieDetailResponse> call, Response<SerieDetailResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Serie serie = response.body().getSerie();
+                    currentSerie = serie; // Store the current serie
                     List<Episode> episodes = response.body().getEpisodes();
 
                     if (serie == null) {
@@ -169,11 +187,14 @@ public class SerieDetailActivity extends AppCompatActivity {
                     textCountries.setText("Country: " + listToCommaSeparated(response.body().getCountries()));
                     textActors.setText("Actors: " + actorsToString(response.body().getActors()));
 
+                    // Update follow button state
+                    updateFollowButtonState();
+
                     fetchRating(serie.getId());
                     Picasso.get().load(serie.getPoster()).into(poster);
 
                     if (episodes != null && !episodes.isEmpty()) {
-                        EpisodeAdapter adapter = new EpisodeAdapter(episodes);
+                        EpisodeAdapter adapter = new EpisodeAdapter(episodes, serie.getId(), serie.getTitle(), serie.getPoster());
                         recyclerEpisodes.setLayoutManager(new LinearLayoutManager(SerieDetailActivity.this));
                         recyclerEpisodes.setAdapter(adapter);
                     } else {
@@ -392,5 +413,47 @@ public class SerieDetailActivity extends AppCompatActivity {
             names.add(g.getName());
         }
         return android.text.TextUtils.join(", ", names);
+    }
+
+    private void toggleSerieFollow() {
+        if (currentSerie == null) return;
+
+        boolean isCurrentlyFollowed = myListManager.isInMyList(currentSerie.getId());
+        
+        if (isCurrentlyFollowed) {
+            // Remove from My List
+            myListManager.removeFromMyList(currentSerie.getId());
+            Toast.makeText(this, "Removed from My List", Toast.LENGTH_SHORT).show();
+        } else {
+            // Add to My List
+            myListManager.addToMyList(
+                currentSerie.getId(), 
+                currentSerie.getTitle(), 
+                currentSerie.getPoster(), 
+                "serie"
+            );
+            Toast.makeText(this, "Added to My List", Toast.LENGTH_SHORT).show();
+        }
+        
+        // Update button appearance
+        updateFollowButtonState();
+    }
+
+    private void updateFollowButtonState() {
+        if (currentSerie == null) return;
+
+        boolean isFollowed = myListManager.isInMyList(currentSerie.getId());
+        
+        if (isFollowed) {
+            // Show "Added" state
+            imgFollowIcon.setBackgroundResource(R.drawable.thumb_up_24px);
+            textFollowLabel.setText("Added");
+            imgFollowIcon.setBackgroundTintList(android.content.res.ColorStateList.valueOf(getResources().getColor(android.R.color.holo_green_light)));
+        } else {
+            // Show "Add" state
+            imgFollowIcon.setBackgroundResource(R.drawable.add);
+            textFollowLabel.setText(R.string.add_my_list);
+            imgFollowIcon.setBackgroundTintList(android.content.res.ColorStateList.valueOf(getResources().getColor(android.R.color.white)));
+        }
     }
 }
