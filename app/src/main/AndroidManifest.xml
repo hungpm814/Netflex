@@ -67,6 +67,9 @@
         <activity android:name=".activity.WatchHistoryActivity"
             android:exported="true"
             />
+        <activity android:name=".activity.MySeriesActivity"
+            android:exported="true"
+            />
     </application>
 
 </manifest>

@@ -19,9 +19,19 @@ import java.util.List;
 public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeViewHolder> {
     private final List<Episode> episodeList;
     private Context context;
+    private String serieId;
+    private String serieTitle;
+    private String seriePoster;
 
     public EpisodeAdapter(List<Episode> episodeList) {
         this.episodeList = episodeList;
+    }
+
+    public EpisodeAdapter(List<Episode> episodeList, String serieId, String serieTitle, String seriePoster) {
+        this.episodeList = episodeList;
+        this.serieId = serieId;
+        this.serieTitle = serieTitle;
+        this.seriePoster = seriePoster;
     }
 
     @NonNull
@@ -41,6 +51,14 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.EpisodeV
             Intent intent = new Intent(context, WatchFilmActivity.class);
             intent.putExtra("video_url", episode.getPath());
             intent.putExtra("episode_title", episode.getTitle());
+            
+            // Add series information if available
+            if (serieId != null) {
+                intent.putExtra("serie_id", serieId);
+                intent.putExtra("serie_title", serieTitle);
+                intent.putExtra("serie_poster", seriePoster);
+            }
+            
             context.startActivity(intent);
         });
     }
