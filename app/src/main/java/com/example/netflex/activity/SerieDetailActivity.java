@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
@@ -21,6 +22,7 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.netflex.APIRequestModels.PostCommentRequest;
 import com.example.netflex.APIServices.ApiClient;
 import com.example.netflex.APIServices.CommentAPIService;
 import com.example.netflex.APIServices.ReviewAPIService;
@@ -72,9 +74,9 @@ public class SerieDetailActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private CommentAdapter commentAdapter;
     private SharedPreferencesManager sharedPreferencesManager;
-    private Button btnLoadMore;
+    private Button btnLoadMore, btnSendComment;
     private String sort = "desc";
-
+    private EditText editTextComment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +109,12 @@ public class SerieDetailActivity extends AppCompatActivity {
         });
         btnLoadMore = findViewById(R.id.btnLoadMore);
         textNoComments = findViewById(R.id.no_comments);
+        editTextComment = findViewById(R.id.editTextComment);
+        btnSendComment = findViewById(R.id.btnSendComment);
+
+        btnSendComment.setOnClickListener(v -> {
+            postComment();
+        });
 
         nestedScrollView.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -226,6 +234,52 @@ public class SerieDetailActivity extends AppCompatActivity {
             public void onFailure(Call<CommentListResponse> call, Throwable t) {
                 Log.e("API_ERROR", "Failed to fetch comments", t);
                 Toast.makeText(SerieDetailActivity.this, "Failed to fetch comments" + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void reloadComments() {
+        comments.clear();
+        textNoComments.setVisibility(GONE);
+        page = 1;
+        loadComments(serieId, page, sort);
+    }
+    private void postComment() {
+        String content = editTextComment.getText().toString().trim();
+        if (content.isEmpty()) {
+            Toast.makeText(this, "Comment can't be empty", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String userId = sharedPreferencesManager.getUserId();
+
+        if (userId == null) {
+            Toast.makeText(this, "You must be logged in", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        PostCommentRequest request = new PostCommentRequest();
+        request.setContent(content);
+        request.setUserId(userId);
+        request.setSeriesId(serieId);
+
+        commentAPIService.postComment(request).enqueue(new Callback<Boolean>() {
+            @Override
+            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(SerieDetailActivity.this, "Comment posted", Toast.LENGTH_SHORT).show();
+                    editTextComment.setText("");
+
+                    // Reload comment list.
+                    reloadComments();
+                } else {
+                    Toast.makeText(SerieDetailActivity.this, "Failed to post comment", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Boolean> call, Throwable t) {
+                Toast.makeText(SerieDetailActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
