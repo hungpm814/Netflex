@@ -19,6 +19,9 @@ public interface FilmAPIService {
             @Query("year") Integer year,
             @Query("keyword") String keyword
     );
+    @GET("api/film/latest")
+    Call<FilmResponse> getLatestFilms(@Query("page") int page);
+
     @GET("api/Film/{filmId}")
     Call<FilmDetailViewModel> getFilm(@Path("filmId") String filmId);
 }

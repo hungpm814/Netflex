@@ -87,6 +87,7 @@ public class HomeActivity extends AppCompatActivity {
 
         //Fetch danh sách Film
         fetchFilteredFilms(null, null, null, null);
+        fetchLatestFilms();
 
         // Code cho phần Lọc
         findViewById(R.id.btnFilter).setOnClickListener(v -> showFilterDialog());
@@ -159,9 +160,7 @@ public class HomeActivity extends AppCompatActivity {
                     List<Film> films = response.body().items;
                     Log.d("FILM_API", "Filtered films count: " + films.size());
 
-                    // Gán dữ liệu vào cả 2 RecyclerView
                     setupFilmRecyclerView(recyclerTrending, films);
-                    setupFilmRecyclerView(recyclerReleases, films);
                 } else {
                     Log.e("FILM_API", "Response code: " + response.code());
 
@@ -180,7 +179,30 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
+    private void fetchLatestFilms() {
+        FilmAPIService apiService = ApiClient.getRetrofit().create(FilmAPIService.class);
+        int page = 1;
 
+        Call<FilmResponse> call = apiService.getLatestFilms(page);
+        call.enqueue(new Callback<FilmResponse>() {
+            @Override
+            public void onResponse(Call<FilmResponse> call, Response<FilmResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Film> latestFilms = response.body().items;
+
+                    setupFilmRecyclerView(recyclerReleases, latestFilms);
+                    Log.d("FILM_API", "Latest films count: " + latestFilms.size());
+                } else {
+                    Log.e("FILM_API", "Response code: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FilmResponse> call, Throwable t) {
+                Log.e("FILM_API", "Latest API failed", t);
+            }
+        });
+    }
 
     // Hiển thị danh sách Film
     private void setupFilmRecyclerView(RecyclerView recyclerView, List<Film> films) {
