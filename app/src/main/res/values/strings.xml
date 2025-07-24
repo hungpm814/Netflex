@@ -46,5 +46,8 @@
         <item>Cũ nhất</item>
     </string-array>
 
+    <string name="poster_image">Poster Image</string>
+
+
     <!-- thêm các chuỗi khác nếu cần -->
 </resources>

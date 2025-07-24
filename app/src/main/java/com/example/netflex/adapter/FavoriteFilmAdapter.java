@@ -23,6 +23,7 @@ public class FavoriteFilmAdapter extends RecyclerView.Adapter<FavoriteFilmAdapte
     private final List<FavoriteFilmDto> filmList;
     private final OnRemoveClickListener listener;
 
+    // Interface duy nhất để xử lý sự kiện xóa
     public interface OnRemoveClickListener {
         void onRemoveClick(FavoriteFilmDto film);
     }
@@ -46,17 +47,19 @@ public class FavoriteFilmAdapter extends RecyclerView.Adapter<FavoriteFilmAdapte
         holder.title.setText(film.getTitle());
         holder.type.setText("FILM");
 
+        // Load ảnh poster
         Glide.with(context)
                 .load(film.getPoster())
                 .placeholder(R.drawable.poster_bg)
                 .into(holder.poster);
-        Log.d("FAVORITE_POSTER", "Poster URL: " + film.getPoster());
 
 
-
-
-
-        holder.btnRemove.setOnClickListener(v -> listener.onRemoveClick(film));
+        // Gán sự kiện xoá
+        holder.btnRemove.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onRemoveClick(film);
+            }
+        });
     }
 
     @Override
