@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.netflex.R;
 import com.example.netflex.responseAPI.favorite.FavoriteSeriesDto;
-
+import android.content.Intent;
 import java.util.List;
 
 public class FavoriteSeriesAdapter extends RecyclerView.Adapter<FavoriteSeriesAdapter.ViewHolder> {
@@ -48,18 +48,23 @@ public class FavoriteSeriesAdapter extends RecyclerView.Adapter<FavoriteSeriesAd
 
         Log.d("FAVORITE_SERIES", "Poster URL: " + series.getPoster());
 
-//        Glide.with(context)
-//                .load(series.getPoster())
-//                .placeholder(R.drawable.poster_bg)
-//                .into(holder.poster);
         Glide.with(context)
                 .load(series.getPoster())
                 .placeholder(R.drawable.poster_bg)
                 .into(holder.poster);
-
-
-
         holder.btnRemove.setOnClickListener(v -> listener.onRemoveClick(series));
+
+
+
+        View.OnClickListener goToDetailListener = v -> {
+            Log.d("FAVORITE", "Clicked series id: " + series.getSeriesId()); // kiểm tra log
+            Intent intent = new Intent(context, com.example.netflex.activity.SerieDetailActivity.class);
+            intent.putExtra("serie_id", series.getSeriesId());
+            context.startActivity(intent);
+        };
+        holder.poster.setOnClickListener(goToDetailListener);
+        holder.itemView.setOnClickListener(goToDetailListener);
+
     }
 
     @Override
