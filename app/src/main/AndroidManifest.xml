@@ -15,17 +15,18 @@
         android:theme="@style/Theme.Netflex"
         tools:targetApi="31">
         <activity
+            android:name=".activity.FavoriteListActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.FilteredResultActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true"></activity>
         <activity
             android:name=".activity.UserProfileActivity"
             android:exported="true" />
         <activity
             android:name=".activity.WatchFilmActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:exported="true"
-            />
+            android:exported="true" />
         <activity
             android:name=".activity.FilmDetailActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -50,26 +51,29 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- Không cần MAIN/LAUNCHER ở HomeActivity và MainActivity -->
-        <activity android:name=".activity.ForgotPasswordActivity" android:exported="true" />
-        <activity android:name=".activity.ForgotPasswordOtpActivity" android:exported="true" />
-        <activity android:name=".activity.ResetPasswordActivity" android:exported="true" />
-
+        </activity> <!-- Không cần MAIN/LAUNCHER ở HomeActivity và MainActivity -->
+        <activity
+            android:name=".activity.ForgotPasswordActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activity.ForgotPasswordOtpActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activity.ResetPasswordActivity"
+            android:exported="true" />
         <activity android:name=".activity.RegisterActivity" />
-        <activity android:name=".activity.LoginActivity"
-            android:exported="true"
-            />
-        <activity android:name=".activity.SettingsActivity"
-            android:exported="true"
-            />
-        <activity android:name=".activity.WatchHistoryActivity"
-            android:exported="true"
-            />
-        <activity android:name=".activity.MySeriesActivity"
-            android:exported="true"
-            />
+        <activity
+            android:name=".activity.LoginActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activity.SettingsActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activity.WatchHistoryActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activity.MySeriesActivity"
+            android:exported="true" />
     </application>
 
 </manifest>

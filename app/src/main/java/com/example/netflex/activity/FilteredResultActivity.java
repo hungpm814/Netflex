@@ -639,8 +639,9 @@ public class FilteredResultActivity extends AppCompatActivity {
                 return true;
             } else if (itemId == R.id.menu_explore) {
                 return true;
-            } else if (itemId == R.id.menu_new) {
-                // TODO: Mở New & Hot
+            } else if (itemId == R.id.menu_favorite) {
+                Intent intent = new Intent(FilteredResultActivity.this, FavoriteListActivity.class);
+                startActivity(intent);
                 return true;
             } else if (itemId == R.id.menu_History) {
                 // TODO: Mở History

@@ -111,8 +111,8 @@ public class WatchHistoryActivity extends AppCompatActivity {
             } else if (itemId == R.id.menu_explore) {
                 // TODO: Navigate to explore activity
                 return true;
-            } else if (itemId == R.id.menu_new) {
-                // TODO: Navigate to new & hot activity
+            } else if (itemId == R.id.menu_favorite) {
+                startActivity(new Intent(WatchHistoryActivity.this, FavoriteListActivity.class));
                 return true;
             } else if (itemId == R.id.menu_History) {
                 // Already in this activity

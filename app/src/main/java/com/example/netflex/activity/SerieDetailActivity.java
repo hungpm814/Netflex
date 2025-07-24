@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -22,9 +21,11 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.netflex.APIRequestModels.AddFavoriteRequest;
 import com.example.netflex.APIRequestModels.PostCommentRequest;
 import com.example.netflex.APIServices.ApiClient;
 import com.example.netflex.APIServices.CommentAPIService;
+import com.example.netflex.APIServices.FavoriteApiService;
 import com.example.netflex.APIServices.ReviewAPIService;
 import com.example.netflex.APIServices.SerieAPIService;
 import com.example.netflex.R;
@@ -34,8 +35,8 @@ import com.example.netflex.model.Comment;
 import com.example.netflex.model.Episode;
 import com.example.netflex.model.Genre;
 import com.example.netflex.model.Serie;
-import com.example.netflex.requestAPI.auth.RatingRequest;
 import com.example.netflex.responseAPI.CommentListResponse;
+import com.example.netflex.responseAPI.favorite.FavoriteMessageResponse;
 import com.example.netflex.utils.MyListManager;
 import com.example.netflex.utils.SharedPreferencesManager;
 import com.example.netflex.viewModels.ReviewEditModel;
@@ -43,6 +44,7 @@ import com.example.netflex.responseAPI.ReviewResponse;
 import com.example.netflex.responseAPI.SerieDetailResponse;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -74,6 +76,9 @@ public class SerieDetailActivity extends AppCompatActivity {
     private SharedPreferencesManager prefsManager;
     private MyListManager myListManager;
     private CommentAPIService commentAPIService;
+    private FavoriteApiService favoriteApiService;
+    private String userId;
+    private boolean isFavorite = false;
     private List<Comment> comments = new ArrayList<>();
     private int pageSize = 5;
     private int page = 1;
@@ -112,6 +117,9 @@ public class SerieDetailActivity extends AppCompatActivity {
             Toast.makeText(this, "Serie ID is missing", Toast.LENGTH_SHORT).show();
             return;
         }
+
+
+
 
         SharedPreferences prefs = getSharedPreferences("RATING_PREF", MODE_PRIVATE);
         float savedRating = prefs.getFloat("rating_film_" + serieId, 0f);
@@ -165,6 +173,13 @@ public class SerieDetailActivity extends AppCompatActivity {
         initServices();
         initApiServices();
         loadComments(serieId, page, sort);
+
+        userId = sharedPreferencesManager.getUserId();
+        if (userId == null) {
+            Toast.makeText(this, "User ID is missing", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        setupFavoriteButton(userId, serieId);
 
         SerieAPIService apiService = ApiClient.getRetrofit().create(SerieAPIService.class);
         apiService.getSerieDetail(serieId).enqueue(new Callback<SerieDetailResponse>() {
@@ -455,5 +470,158 @@ public class SerieDetailActivity extends AppCompatActivity {
             textFollowLabel.setText(R.string.add_my_list);
             imgFollowIcon.setBackgroundTintList(android.content.res.ColorStateList.valueOf(getResources().getColor(android.R.color.white)));
         }
+    }
+
+
+    private void checkIsFavorite() {
+        String userId = sharedPreferencesManager.getUserId();
+        favoriteApiService.isFavorite(userId, null, serieId).enqueue(new Callback<Boolean>() {
+            @Override
+            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    isFavorite = response.body();
+                    updateFavoriteIcon();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Boolean> call, Throwable t) {
+                Toast.makeText(SerieDetailActivity.this, "Failed to check favorite", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void updateFavoriteIcon() {
+        ImageView imgFavorite = findViewById(R.id.imgFavorite);
+        if (imgFavorite != null) {
+            imgFavorite.setImageResource(isFavorite ? R.drawable.ic_favorite : R.drawable.ic_favorite_border);
+        }
+    }
+
+    private void addToFavoriteApiCall() {
+        AddFavoriteRequest request = new AddFavoriteRequest(sharedPreferencesManager.getUserId(), null, serieId);
+        favoriteApiService.addFavorite(request).enqueue(new Callback<FavoriteMessageResponse>() {
+            @Override
+            public void onResponse(Call<FavoriteMessageResponse> call, Response<FavoriteMessageResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    isFavorite = true;
+                    updateFavoriteIcon();
+                    Toast.makeText(SerieDetailActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(SerieDetailActivity.this, "Không thể thêm vào yêu thích", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FavoriteMessageResponse> call, Throwable t) {
+                Toast.makeText(SerieDetailActivity.this, "Lỗi kết nối khi thêm yêu thích", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void removeFromFavoriteApiCall() {
+        favoriteApiService.removeFavorite(sharedPreferencesManager.getUserId(), null, serieId)
+                .enqueue(new Callback<FavoriteMessageResponse>() {
+                    @Override
+                    public void onResponse(Call<FavoriteMessageResponse> call, Response<FavoriteMessageResponse> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            isFavorite = false;
+                            updateFavoriteIcon();
+                            Toast.makeText(SerieDetailActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(SerieDetailActivity.this, "Không thể xoá khỏi yêu thích", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<FavoriteMessageResponse> call, Throwable t) {
+                        Toast.makeText(SerieDetailActivity.this, "Lỗi kết nối khi xoá yêu thích", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+
+    private void setupFavoriteButton(String userId, String seriesId) {
+        if (seriesId == null) return;
+
+        ImageView imgFavorite = findViewById(R.id.imgFavorite);
+        favoriteApiService = ApiClient.getRetrofit().create(FavoriteApiService.class);
+
+        // Kiểm tra trạng thái yêu thích ban đầu
+        Log.d("FAVORITE_DEBUG", "userId: " + userId);
+        Log.d("FAVORITE_DEBUG", "serieId: " + seriesId); // kiểm tra xem có null không
+
+        favoriteApiService.isFavorite(userId, null, seriesId.toString())
+                .enqueue(new Callback<Boolean>() {
+                    @Override
+                    public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                        Log.d("SETUP_FAVORITE", "onResponse: " + response.body());
+
+                        if (response.isSuccessful() && response.body() != null) {
+                            isFavorite = response.body();
+                            imgFavorite.setImageResource(isFavorite ? R.drawable.ic_favorite : R.drawable.ic_favorite_border);
+                        } else {
+                            try {
+                                String errorBody = response.errorBody() != null ? response.errorBody().string() : "null";
+                                Log.e("SETUP_FAVORITE", "Response failed - Error body: " + errorBody);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }
+
+
+                    @Override
+                    public void onFailure(Call<Boolean> call, Throwable t) {
+                        Toast.makeText(SerieDetailActivity.this, "Failed to check favorite", Toast.LENGTH_SHORT).show();
+                        Log.e("SETUP_FAVORITE", "onFailure: ", t);
+                    }
+                });
+
+        // Xử lý sự kiện nhấn nút yêu thích
+        imgFavorite.setOnClickListener(v -> {
+            if (isFavorite) {
+                // Nếu đã yêu thích → Gọi API để xóa
+                favoriteApiService.removeFavorite(userId, null, seriesId)
+                        .enqueue(new Callback<FavoriteMessageResponse>() {
+                            @Override
+                            public void onResponse(Call<FavoriteMessageResponse> call, Response<FavoriteMessageResponse> response) {
+                                if (response.isSuccessful() && response.body() != null) {
+                                    isFavorite = false;
+                                    imgFavorite.setImageResource(R.drawable.ic_favorite_border);
+                                    Toast.makeText(SerieDetailActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(SerieDetailActivity.this, "Không thể xoá khỏi yêu thích", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<FavoriteMessageResponse> call, Throwable t) {
+                                Toast.makeText(SerieDetailActivity.this, "Lỗi kết nối khi xoá yêu thích", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            } else {
+                // Nếu chưa yêu thích → Gọi API để thêm
+                AddFavoriteRequest request = new AddFavoriteRequest(userId, null, seriesId);
+                favoriteApiService.addFavorite(request).enqueue(new Callback<FavoriteMessageResponse>() {
+                    @Override
+                    public void onResponse(Call<FavoriteMessageResponse> call, Response<FavoriteMessageResponse> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            isFavorite = true;
+                            imgFavorite.setImageResource(R.drawable.ic_favorite);
+                            Toast.makeText(SerieDetailActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(SerieDetailActivity.this, "Không thể thêm vào yêu thích", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<FavoriteMessageResponse> call, Throwable t) {
+                        Toast.makeText(SerieDetailActivity.this, "Lỗi kết nối khi thêm yêu thích", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
     }
 }
