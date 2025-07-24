@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.netflex.activity.FilmDetailActivity;
 import com.example.netflex.R;
+import com.example.netflex.activity.SerieDetailActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -37,10 +38,11 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     @Override
     public void onBindViewHolder(@NonNull HistoryViewHolder holder, int position) {
         String[] historyData = historyList.get(position);
-        String filmId = historyData[0];
+        String id = historyData[0];
         String title = historyData[1];
         String poster = historyData[2];
         long timestamp = Long.parseLong(historyData[3]);
+        String type = historyData[4];
 
         // Set title
         holder.textTitle.setText(title);
@@ -56,12 +58,18 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         String timeAgo = getTimeAgo(timestamp);
         holder.textWatchedTime.setText("Đã xem " + timeAgo);
 
-        // Click listener to open FilmDetailActivity
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, FilmDetailActivity.class);
-            intent.putExtra("film_id", filmId);
-            intent.putExtra("film_title", title);
-            intent.putExtra("film_poster", poster);
+            Intent intent;
+            if ("film".equals(type)) {
+                intent = new Intent(context, FilmDetailActivity.class);
+            } else if ("serie".equals(type)) {
+                intent = new Intent(context, SerieDetailActivity.class);  // Activity mới cho Serie
+            } else {
+                return;
+            }
+            intent.putExtra("id", id);
+            intent.putExtra("title", title);
+            intent.putExtra("poster", poster);
             intent.putExtra("from_history", true);
             context.startActivity(intent);
         });

@@ -155,14 +155,33 @@
                     android:isIndicator="true"
                     android:layout_marginBottom="8dp" />
 
-                <!-- Actors -->
                 <TextView
-                    android:id="@+id/textActor"
+                    android:id="@+id/textGenres"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:text="Category:"
                     android:textColor="#AAAAAA"
-                    android:textSize="13sp" />
+                    android:textSize="13sp"
+                    android:layout_marginTop="8dp" />
+
+                <TextView
+                    android:id="@+id/textCountries"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Country:"
+                    android:textColor="#AAAAAA"
+                    android:textSize="13sp"
+                    android:layout_marginTop="4dp" />
+
+                <TextView
+                    android:id="@+id/textActors"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Actor:"
+                    android:textColor="#AAAAAA"
+                    android:textSize="13sp"
+                    android:layout_marginTop="4dp" />
+
             </LinearLayout>
 
             <!-- Action buttons -->

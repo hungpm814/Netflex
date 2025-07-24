@@ -312,7 +312,7 @@
             android:layout_marginBottom="32dp"
             android:padding="16dp"
             android:background="#111111"
-            app:layout_constraintTop_toBottomOf="@id/actionButtons"
+            app:layout_constraintTop_toBottomOf="@id/recyclerEpisodes"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
@@ -325,18 +325,6 @@
                 android:textStyle="bold"
                 android:textColor="#FFFFFF"
                 android:layout_marginBottom="8dp" />
-
-            <!-- Sorting options -->
-            <!--                <Spinner-->
-            <!--                    android:id="@+id/spinnerSort"-->
-            <!--                    android:layout_width="wrap_content"-->
-            <!--                    android:layout_height="wrap_content"-->
-            <!--                    android:entries="@array/sort_options"-->
-            <!--                    android:layout_gravity="end"-->
-            <!--                    android:backgroundTint="#444444"-->
-            <!--                    android:popupBackground="#222222"-->
-            <!--                    android:textColor="@color/white"-->
-            <!--                    android:layout_marginBottom="8dp" />-->
 
             <!-- Comment input -->
             <LinearLayout

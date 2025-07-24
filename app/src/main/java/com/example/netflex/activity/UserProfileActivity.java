@@ -17,6 +17,8 @@ import com.example.netflex.APIServices.ApiClient;
 import com.example.netflex.APIServices.UserAPIService;
 import com.example.netflex.R;
 import com.example.netflex.model.User;
+import com.example.netflex.utils.SharedPreferencesManager;
+import com.google.android.material.textfield.TextInputEditText;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -31,6 +33,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
     private User currentUser;
     private UserAPIService userAPIService;
+    private SharedPreferencesManager prefsManager;
     private String currentUserId = "737c2606-b819-4655-a444-d231040d8c38";
 
     @Override
@@ -38,10 +41,13 @@ public class UserProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
 
+
         initViews();
         initAPI();
         loadUserData();
         setupClickListeners();
+        prefsManager = new SharedPreferencesManager(this);
+        currentUserId = prefsManager.getUserId();
     }
 
     private void initViews() {

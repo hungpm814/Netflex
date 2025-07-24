@@ -16,6 +16,7 @@ import com.example.netflex.R;
 import com.example.netflex.activity.SettingsActivity;
 import com.example.netflex.adapter.HistoryAdapter;
 import com.example.netflex.utils.SharedPreferencesManager;
+import com.example.netflex.utils.SpacingItemDecoration;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.List;
@@ -53,25 +54,6 @@ public class WatchHistoryActivity extends AppCompatActivity {
         super.onResume();
         // Refresh history data when activity resumes (e.g., after returning from another screen)
         loadWatchHistory();
-    }
-
-    /**
-     * Initialize views and set up click listeners
-     */
-    private void initViews() {
-        recyclerViewHistory = findViewById(R.id.recyclerViewHistory);
-        emptyStateLayout = findViewById(R.id.emptyStateLayout);
-        textClearHistory = findViewById(R.id.textClearHistory);
-        bottomNavigationView = findViewById(R.id.bottomNavigation);
-
-        // Set up clear history button
-        textClearHistory.setOnClickListener(v -> {
-            prefsManager.clearWatchHistory();
-            loadWatchHistory(); // Refresh the list immediately
-        });
-
-        // Set up RecyclerView with LinearLayoutManager
-        recyclerViewHistory.setLayoutManager(new LinearLayoutManager(this));
     }
 
     /**
@@ -127,4 +109,25 @@ public class WatchHistoryActivity extends AppCompatActivity {
         // Highlight the current menu item
         bottomNavigationView.setSelectedItemId(R.id.menu_History);
     }
+
+    private void initViews() {
+        recyclerViewHistory = findViewById(R.id.recyclerViewHistory);
+        emptyStateLayout = findViewById(R.id.emptyStateLayout);
+        textClearHistory = findViewById(R.id.textClearHistory);
+        bottomNavigationView = findViewById(R.id.bottomNavigation);
+
+        // Set up clear history button
+        textClearHistory.setOnClickListener(v -> {
+            prefsManager.clearWatchHistory();
+            loadWatchHistory();
+        });
+
+        // Set up RecyclerView with spacing
+        recyclerViewHistory.setLayoutManager(new LinearLayoutManager(this));
+
+        // Thêm ItemDecoration cho spacing giữa các items
+        int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.recyclerview_item_spacing);
+        recyclerViewHistory.addItemDecoration(new SpacingItemDecoration(spacingInPixels));
+    }
+
 }

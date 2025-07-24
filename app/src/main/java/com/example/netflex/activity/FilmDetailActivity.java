@@ -42,6 +42,8 @@ import com.example.netflex.R;
 import com.example.netflex.model.Actor;
 import com.example.netflex.model.Comment;
 import com.example.netflex.model.Film;
+import com.example.netflex.model.Genre;
+import com.example.netflex.model.User;
 import com.example.netflex.responseAPI.CommentListResponse;
 import com.example.netflex.responseAPI.favorite.FavoriteMessageResponse;
 import com.example.netflex.responseAPI.ReviewResponse;
@@ -81,19 +83,23 @@ public class FilmDetailActivity extends AppCompatActivity {
     private int page = 1;
     private String sort = "desc";
     private String filmId;
-
+    private TextView textGenres, textCountries, textActors;
     private TextView textRating;
     private RatingBar ratingBar;
 
     private LinearLayout layoutRating, layoutRateContent;
     private RatingBar ratingBarFilm;
     private SharedPreferencesManager sharedPreferencesManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_film_detail);
 
         filmId = getIntent().getStringExtra("film_id");
+        if (filmId == null) {
+            filmId = getIntent().getStringExtra("id");
+        }
 
         initApis();
         initServices();
@@ -115,6 +121,10 @@ public class FilmDetailActivity extends AppCompatActivity {
                         Film film = response.body().film;
                         List<Actor> actors = response.body().actors;
 
+                        textGenres.setText("Category: " + genreListToString(response.body().getGenres()));
+                        textCountries.setText("Country: " + listToCommaSeparated(response.body().getCountries()));
+                        textActors.setText("Actors: " + actorsToString(actors));
+
                         // Setup viewModel.
                         FilmDetailViewModel viewModel = new FilmDetailViewModel();
                         viewModel.setFilm(film);
@@ -125,7 +135,7 @@ public class FilmDetailActivity extends AppCompatActivity {
 
                         // Save to watch history when viewing film detail
                         SharedPreferencesManager prefsManager = new SharedPreferencesManager(FilmDetailActivity.this);
-                        prefsManager.addToWatchHistory(film.getId(), film.getTitle(), film.getPoster());
+                        prefsManager.addToWatchHistory(film.getId(), film.getTitle(), film.getPoster(), "film");
                     } else {
                         Toast.makeText(FilmDetailActivity.this, "Failed to load film details", Toast.LENGTH_SHORT)
                                 .show();
@@ -272,6 +282,7 @@ public class FilmDetailActivity extends AppCompatActivity {
             });
         }
 
+
         // Set image to poster.
         Picasso.get()
                 .load(viewModel.film.poster)
@@ -292,7 +303,6 @@ public class FilmDetailActivity extends AppCompatActivity {
             textsForTextActor = getString(R.string.no_actor_info);
         }
 
-        textActor.setText("Actors: " + textsForTextActor);
         textYear.setText("Year: " + viewModel.film.getProductionYear());
     }
 
@@ -301,7 +311,9 @@ public class FilmDetailActivity extends AppCompatActivity {
         poster = findViewById(R.id.imagePoster);
         title = findViewById(R.id.title);
         textAbout = findViewById(R.id.textAbout);
-        textActor = findViewById(R.id.textActor);
+        textGenres = findViewById(R.id.textGenres);
+        textCountries = findViewById(R.id.textCountries);
+        textActors = findViewById(R.id.textActors);
         textYear = findViewById(R.id.textYear);
         btnTrailer = findViewById(R.id.btnTrailer);
         btnPlay = findViewById(R.id.btnPlay);
@@ -441,7 +453,7 @@ public class FilmDetailActivity extends AppCompatActivity {
 
     private void playFilm(Film film) {
         SharedPreferencesManager prefsManager = new SharedPreferencesManager(this);
-        prefsManager.addToWatchHistory(film.getId(), film.getTitle(), film.getPoster());
+        prefsManager.addToWatchHistory(film.getId(), film.getTitle(), film.getPoster(), "film");
         Intent intent = new Intent(FilmDetailActivity.this, WatchFilmActivity.class);
         intent.putExtra("video_url", film.getPath());
         startActivity(intent);
@@ -596,5 +608,30 @@ public class FilmDetailActivity extends AppCompatActivity {
             }
         });
     }
+  
+    private String genreListToString(List<Genre> genres) {
+        if (genres == null || genres.isEmpty()) return "No information";
+        List<String> names = new ArrayList<>();
+        for (Genre g : genres) {
+            names.add(g.getName());
+        }
+        return android.text.TextUtils.join(", ", names);
+    }
 
+    private String listToCommaSeparated(List<String> list) {
+        if (list == null || list.isEmpty()) return "No information";
+        return android.text.TextUtils.join(", ", list);
+    }
+
+    private String actorsToString(List<com.example.netflex.model.Actor> actors) {
+        if (actors == null || actors.isEmpty()) return "No information";
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < actors.size(); i++) {
+            builder.append(actors.get(i).getName());
+            if (i < actors.size() - 1) {
+                builder.append(", ");
+            }
+        }
+        return builder.toString();
+    }
 }
