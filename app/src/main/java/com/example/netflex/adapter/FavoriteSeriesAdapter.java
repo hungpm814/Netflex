@@ -1,6 +1,7 @@
 package com.example.netflex.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,10 +46,18 @@ public class FavoriteSeriesAdapter extends RecyclerView.Adapter<FavoriteSeriesAd
         holder.title.setText(series.getTitle());
         holder.type.setText("SERIES");
 
+        Log.d("FAVORITE_SERIES", "Poster URL: " + series.getPoster());
+
+//        Glide.with(context)
+//                .load(series.getPoster())
+//                .placeholder(R.drawable.poster_bg)
+//                .into(holder.poster);
         Glide.with(context)
                 .load(series.getPoster())
                 .placeholder(R.drawable.poster_bg)
                 .into(holder.poster);
+
+
 
         holder.btnRemove.setOnClickListener(v -> listener.onRemoveClick(series));
     }

@@ -70,14 +70,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- RecyclerView hiển thị danh sách -->
+    <!-- RecyclerView dạng lưới 3 cột -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerFavorites"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:paddingBottom="64dp"
         android:clipToPadding="false"
+        android:padding="8dp"
         android:scrollbars="vertical"
+        android:overScrollMode="never"
         app:layout_constraintTop_toBottomOf="@id/txtNoResult"
         app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
         app:layout_constraintStart_toStartOf="parent"

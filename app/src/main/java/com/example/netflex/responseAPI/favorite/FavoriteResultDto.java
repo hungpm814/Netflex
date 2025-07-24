@@ -1,4 +1,7 @@
 package com.example.netflex.responseAPI.favorite;
+import com.example.netflex.responseAPI.favorite.FavoriteFilmDto;
+import com.example.netflex.responseAPI.favorite.FavoriteSeriesDto;
+
 
 import java.util.List;
 
