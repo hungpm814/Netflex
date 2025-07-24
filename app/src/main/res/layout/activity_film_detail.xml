@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -135,6 +134,19 @@
                     android:textColor="#FFFFFF"
                     android:textSize="14sp"
                     android:textStyle="bold" />
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:indeterminateTint="#E50914"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toTopOf="@id/textRating"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/textAbout" />
+
                 <TextView
                     android:id="@+id/textRating"
                     android:layout_width="wrap_content"
@@ -293,8 +305,6 @@
 
                 </LinearLayout>
 
-
-
                 <!-- Share -->
                 <LinearLayout
                     android:layout_width="0dp"
@@ -319,18 +329,6 @@
 
 
             </LinearLayout>
-
-            <ProgressBar
-                android:id="@+id/progressBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:indeterminateTint="#E50914"
-                android:visibility="visible"
-                app:layout_constraintBottom_toTopOf="@id/actionButtons"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/btnPlay" />
 
             <WebView
                 android:id="@+id/webViewTrailer"
@@ -365,18 +363,6 @@
                     android:textStyle="bold"
                     android:textColor="#FFFFFF"
                     android:layout_marginBottom="8dp" />
-
-                <!-- Sorting options -->
-<!--                <Spinner-->
-<!--                    android:id="@+id/spinnerSort"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:entries="@array/sort_options"-->
-<!--                    android:layout_gravity="end"-->
-<!--                    android:backgroundTint="#444444"-->
-<!--                    android:popupBackground="#222222"-->
-<!--                    android:textColor="@color/white"-->
-<!--                    android:layout_marginBottom="8dp" />-->
 
                 <!-- Comment input -->
                 <LinearLayout

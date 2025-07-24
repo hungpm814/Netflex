@@ -47,11 +47,6 @@ public class WatchFilmActivity extends AppCompatActivity {
         serieTitle = getIntent().getStringExtra("serie_title");
         seriePoster = getIntent().getStringExtra("serie_poster");
 
-        // Debug log
-        android.util.Log.d("🐞🐞🐞 WatchFilmActivity", "serieId: " + serieId);
-        android.util.Log.d("🐞🐞🐞🐞 WatchFilmActivity", "serieTitle: " + serieTitle);
-        android.util.Log.d("🐞🐞🐞🐞🐞 WatchFilmActivity", "seriePoster: " + seriePoster);
-
         setupPlayer(videoUrl, episodeTitle);
         setupFollowButton();
     }
