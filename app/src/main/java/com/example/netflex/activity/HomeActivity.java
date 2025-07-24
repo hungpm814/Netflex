@@ -499,11 +499,6 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             }
-//        } else if (itemId == R.id.menu_profile) {
-//                Intent intent = new Intent(HomeActivity.this, UserProfileActivity.class);
-//                startActivity(intent);
-//                return true;
-//            }
             return false;
         });
 
