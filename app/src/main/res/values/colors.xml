@@ -16,4 +16,8 @@
     <color name="gray_text">#9CA3AF</color>
     <color name="input_background">#F3F4F6</color>
     <color name="orange_primary">#FF8C42</color>
+    <color name="trung1">#333333</color>
+    <color name="trung2">#888888</color>
+
+
 </resources>

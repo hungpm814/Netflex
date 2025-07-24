@@ -12,9 +12,9 @@
         android:title="@string/expore" />
 
     <item
-        android:id="@+id/menu_new"
-        android:icon="@drawable/baseline_local_fire_department_24"
-        android:title="@string/new_hot" />
+        android:id="@+id/menu_favorite"
+        android:icon="@drawable/ic_favorite"
+        android:title="Favorite" />
 
     <item
         android:id="@+id/menu_History"
