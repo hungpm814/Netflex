@@ -48,6 +48,17 @@ public class FavoriteListActivity extends AppCompatActivity {
     private SharedPreferencesManager sharedPreferencesManager;
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        userId = sharedPreferencesManager.getUserId();
+        if (userId != null) {
+            loadFavorites(userId);
+        }
+    }
+
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorite_list);
