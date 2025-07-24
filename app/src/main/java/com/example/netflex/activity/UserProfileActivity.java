@@ -44,10 +44,12 @@ public class UserProfileActivity extends AppCompatActivity {
 
         initViews();
         initAPI();
-        loadUserData();
-        setupClickListeners();
         prefsManager = new SharedPreferencesManager(this);
         currentUserId = prefsManager.getUserId();
+        loadUserData();
+        setupClickListeners();
+
+
     }
 
     private void initViews() {
