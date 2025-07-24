@@ -7,7 +7,6 @@ import static android.view.View.VISIBLE;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -41,7 +40,6 @@ import com.example.netflex.model.Actor;
 import com.example.netflex.model.Comment;
 import com.example.netflex.model.Film;
 import com.example.netflex.model.Genre;
-import com.example.netflex.model.User;
 import com.example.netflex.responseAPI.CommentListResponse;
 import com.example.netflex.responseAPI.ReviewResponse;
 import com.example.netflex.utils.SharedPreferencesManager;
@@ -49,7 +47,6 @@ import com.example.netflex.viewModels.FilmDetailViewModel;
 import com.example.netflex.viewModels.ReviewEditModel;
 import com.squareup.picasso.Picasso;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -61,10 +58,10 @@ import retrofit2.Response;
 
 public class FilmDetailActivity extends AppCompatActivity {
     private int pageSize = 5;
-    ImageView poster, btnBack;
-    TextView title, textAbout, textActor, textYear, textNoComments;
-    Button btnTrailer, btnPlay, btnLoadMore, btnSendComment;
-    WebView webViewTrailer;
+    private ImageView poster, btnBack;
+    private TextView title, textAbout, textYear, textNoComments;
+    private Button btnTrailer, btnPlay, btnLoadMore, btnSendComment;
+    private WebView webViewTrailer;
     private EditText editTextComment;
     private ProgressBar progressBar;
     private View customView;
@@ -81,7 +78,6 @@ public class FilmDetailActivity extends AppCompatActivity {
     private TextView textGenres, textCountries, textActors;
     private TextView textRating;
     private RatingBar ratingBar;
-
     private LinearLayout layoutRating, layoutRateContent;
     private RatingBar ratingBarFilm;
     private SharedPreferencesManager sharedPreferencesManager;
@@ -271,7 +267,6 @@ public class FilmDetailActivity extends AppCompatActivity {
             });
         }
 
-
         // Set image to poster.
         Picasso.get()
                 .load(viewModel.film.poster)
@@ -280,19 +275,7 @@ public class FilmDetailActivity extends AppCompatActivity {
         title.setText(viewModel.film.getTitle());
         textAbout.setText(viewModel.film.getAbout());
 
-        String textsForTextActor = "";
-        StringBuilder sb = new StringBuilder();
-
-        if (!viewModel.actors.isEmpty()) {
-            for (Actor a : viewModel.actors) {
-                sb.append(a.getName()).append(", ");
-            }
-            textsForTextActor = sb.toString();
-        } else {
-            textsForTextActor = getString(R.string.no_actor_info);
-        }
-
-        textYear.setText("Year: " + viewModel.film.getProductionYear());
+        textYear.setText("Year of release: " + viewModel.film.getProductionYear());
     }
 
     @SuppressLint("SetJavaScriptEnabled")
