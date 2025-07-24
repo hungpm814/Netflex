@@ -486,8 +486,8 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
                 return true;
-            } else if (itemId == R.id.menu_new) {
-                // TODO: Mở New & Hot
+            } else if (itemId == R.id.menu_favorite) {
+                startActivity(new Intent(HomeActivity.this, FavoriteListActivity.class));
                 return true;
             } else if (itemId == R.id.menu_History) {
                 // TODO: Mở History

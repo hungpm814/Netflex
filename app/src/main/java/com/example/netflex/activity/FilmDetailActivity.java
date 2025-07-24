@@ -29,9 +29,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.netflex.APIRequestModels.AddFavoriteRequest;
 import com.example.netflex.APIRequestModels.PostCommentRequest;
 import com.example.netflex.APIServices.ApiClient;
 import com.example.netflex.APIServices.CommentAPIService;
+import com.example.netflex.APIServices.FavoriteApiService;
 import com.example.netflex.APIServices.FilmAPIService;
 import com.example.netflex.APIServices.ReviewAPIService;
 import com.example.netflex.adapter.CommentAdapter;
@@ -41,6 +44,7 @@ import com.example.netflex.model.Comment;
 import com.example.netflex.model.Film;
 import com.example.netflex.model.Genre;
 import com.example.netflex.responseAPI.CommentListResponse;
+import com.example.netflex.responseAPI.favorite.FavoriteMessageResponse;
 import com.example.netflex.responseAPI.ReviewResponse;
 import com.example.netflex.utils.SharedPreferencesManager;
 import com.example.netflex.viewModels.FilmDetailViewModel;
@@ -72,6 +76,9 @@ public class FilmDetailActivity extends AppCompatActivity {
     private List<Comment> comments = new ArrayList<>();
     private RecyclerView recyclerView;
     private CommentAdapter commentAdapter;
+    private FavoriteApiService favoriteApiService;
+    private String userId;
+    private boolean isFavorite = false;
     private int page = 1;
     private String sort = "desc";
     private String filmId;
@@ -95,6 +102,8 @@ public class FilmDetailActivity extends AppCompatActivity {
         initApis();
         initServices();
         setupViews();
+
+        userId = sharedPreferencesManager.getUserId();
 
         Call<FilmDetailViewModel> call = filmAPIService.getFilm(filmId);
 
@@ -140,11 +149,15 @@ public class FilmDetailActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Film ID not found", Toast.LENGTH_SHORT).show();
         }
+
+        setupFavoriteButton(userId, filmId);
     }
 
     private void initApis() {
         filmAPIService = ApiClient.getRetrofit().create(FilmAPIService.class);
         commentAPIService = ApiClient.getRetrofit().create(CommentAPIService.class);
+        favoriteApiService = ApiClient.getRetrofit().create(FavoriteApiService.class);
+
     }
 
     private void initServices(){
@@ -509,6 +522,78 @@ public class FilmDetailActivity extends AppCompatActivity {
         });
     }
 
+    private void setupFavoriteButton(String userId, String filmId) {
+        if (filmId == null) return;
+
+        ImageView imgFavorite = findViewById(R.id.imgFavorite);
+        favoriteApiService = ApiClient.getRetrofit().create(FavoriteApiService.class);
+
+        // Kiểm tra trạng thái yêu thích ban đầu
+        favoriteApiService.isFavorite(userId, filmId, null)
+                .enqueue(new Callback<Boolean>() {
+                    @Override
+                    public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            isFavorite = response.body();
+                            imgFavorite.setImageResource(isFavorite ? R.drawable.ic_favorite : R.drawable.ic_favorite_border);
+                        } else {
+                            Toast.makeText(FilmDetailActivity.this, "Không kiểm tra được trạng thái yêu thích", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Boolean> call, Throwable t) {
+                        Toast.makeText(FilmDetailActivity.this, "Lỗi kết nối khi kiểm tra yêu thích", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        // Xử lý click nút yêu thích
+        imgFavorite.setOnClickListener(v -> {
+            if (isFavorite) {
+                // Đã yêu thích → gọi API xóa
+                favoriteApiService.removeFavorite(userId, filmId, null)
+                        .enqueue(new Callback<FavoriteMessageResponse>() {
+                            @Override
+                            public void onResponse(Call<FavoriteMessageResponse> call, Response<FavoriteMessageResponse> response) {
+                                if (response.isSuccessful() && response.body() != null) {
+                                    isFavorite = false;
+                                    imgFavorite.setImageResource(R.drawable.ic_favorite_border);
+                                    Toast.makeText(FilmDetailActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(FilmDetailActivity.this, "Không thể xoá khỏi yêu thích", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<FavoriteMessageResponse> call, Throwable t) {
+                                Toast.makeText(FilmDetailActivity.this, "Lỗi kết nối khi xoá yêu thích", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            } else {
+                // Chưa yêu thích → gọi API thêm
+                AddFavoriteRequest request = new AddFavoriteRequest(userId, filmId, null);
+                favoriteApiService.addFavorite(request)
+                        .enqueue(new Callback<FavoriteMessageResponse>() {
+                            @Override
+                            public void onResponse(Call<FavoriteMessageResponse> call, Response<FavoriteMessageResponse> response) {
+                                if (response.isSuccessful() && response.body() != null) {
+                                    isFavorite = true;
+                                    imgFavorite.setImageResource(R.drawable.ic_favorite);
+                                    Toast.makeText(FilmDetailActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(FilmDetailActivity.this, "Không thể thêm vào yêu thích", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<FavoriteMessageResponse> call, Throwable t) {
+                                Toast.makeText(FilmDetailActivity.this, "Lỗi kết nối khi thêm yêu thích", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }
+        });
+    }
+  
     private String genreListToString(List<Genre> genres) {
         if (genres == null || genres.isEmpty()) return "No information";
         List<String> names = new ArrayList<>();
