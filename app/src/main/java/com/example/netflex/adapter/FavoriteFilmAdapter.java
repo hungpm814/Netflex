@@ -1,6 +1,7 @@
 package com.example.netflex.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,6 +61,16 @@ public class FavoriteFilmAdapter extends RecyclerView.Adapter<FavoriteFilmAdapte
                 listener.onRemoveClick(film);
             }
         });
+
+        // 👉 Gán sự kiện click vào poster hoặc itemView để chuyển sang FilmDetailActivity
+        View.OnClickListener goToDetailListener = v -> {
+            Log.d("FAVORITE", "Clicked film id: " + film.getFilmId()); // kiểm tra log
+            Intent intent = new Intent(context, com.example.netflex.activity.FilmDetailActivity.class);
+            intent.putExtra("film_id", film.getFilmId());
+            context.startActivity(intent);
+        };
+        holder.poster.setOnClickListener(goToDetailListener);
+        holder.itemView.setOnClickListener(goToDetailListener);
     }
 
     @Override
